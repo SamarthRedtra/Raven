@@ -5,6 +5,7 @@ import { UpdateAdminStatusButton } from './UpdateAdminStatusButton'
 import { RemoveMemberDialog, useRemoveMember } from '../remove-members/RemoveMemberButton'
 import { FiUserMinus } from 'react-icons/fi'
 import { Member } from '@/hooks/fetchers/useFetchChannelMembers'
+import { UpdateNotificationPreferenceMenu } from './UpdateNotificationPreferenceMenu'
 
 interface UserActionsButtonProps {
     channelData: ChannelListItem,
@@ -35,6 +36,10 @@ export const UserActionsMenu = ({ channelData, updateMembers, selectedMember }: 
                             channelID={channelData.name}
                             updateMembers={updateMembers} />
                     </DropdownMenu.Item>
+                    <UpdateNotificationPreferenceMenu
+                        member={selectedMember}
+                        onUpdate={updateMembers} />
+                    <DropdownMenu.Separator />
                     <DropdownMenu.Item color='red' onClick={onRemove} className='flex items-center gap-2'>
                         <FiUserMinus />
                         Remove from channel

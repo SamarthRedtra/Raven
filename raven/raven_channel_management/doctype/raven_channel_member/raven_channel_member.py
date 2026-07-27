@@ -25,6 +25,7 @@ class RavenChannelMember(Document):
 		last_visit: DF.Datetime
 		linked_doctype: DF.Link | None
 		linked_document: DF.DynamicLink | None
+		notification_preference: DF.Literal["All Messages", "Mentions Only"]
 		user_id: DF.Link
 	# end: auto-generated types
 
@@ -70,6 +71,7 @@ class RavenChannelMember(Document):
 			self.is_admin = 1
 
 		self.allow_notifications = 1
+		self.notification_preference = self.notification_preference or "All Messages"
 
 	def after_delete(self):
 
@@ -194,7 +196,7 @@ class RavenChannelMember(Document):
 				after_commit=True,
 			)
 
-		if not is_direct_message and self.allow_notifications:
+		if not is_direct_message and self.receives_all_message_notifications():
 			subscribe_user_to_topic(self.channel_id, self.user_id)
 
 		if not is_direct_message:
@@ -227,13 +229,13 @@ class RavenChannelMember(Document):
 		"""
 		Check if the notification preference is changed and update the subscription
 		"""
-		if self.has_value_changed("allow_notifications"):
+		if self.has_value_changed("allow_notifications") or self.has_value_changed("notification_preference"):
 			is_direct_message = frappe.get_cached_value(
 				"Raven Channel", self.channel_id, "is_direct_message"
 			)
 
 			if not is_direct_message:
-				if self.allow_notifications:
+				if self.receives_all_message_notifications():
 					subscribe_user_to_topic(self.channel_id, self.user_id)
 				else:
 					unsubscribe_user_to_topic(self.channel_id, self.user_id)
@@ -257,6 +259,10 @@ class RavenChannelMember(Document):
 
 	def get_admin_count(self):
 		return frappe.db.count("Raven Channel Member", {"channel_id": self.channel_id, "is_admin": 1})
+
+	def receives_all_message_notifications(self):
+		"""Whether this member should receive the channel's broadcast notifications."""
+		return self.allow_notifications and self.notification_preference != "Mentions Only"
 
 	def is_thread(self):
 		return frappe.get_cached_value("Raven Channel", self.channel_id, "is_thread")

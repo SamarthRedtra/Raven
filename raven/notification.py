@@ -41,6 +41,7 @@ def send_notification_for_message(message):
 
 	else:
 		message.send_notification_for_channel_message()
+		send_mention_notifications_via_frappe(message)
 
 
 def send_push_notification_via_raven_cloud(message, raven_settings):
@@ -54,6 +55,7 @@ def send_push_notification_via_raven_cloud(message, raven_settings):
 
 	try:
 		channel_members = get_channel_members(message.channel_id)
+		mentions = {user.get("user") for user in message.mentions}
 
 		users = []
 
@@ -64,13 +66,16 @@ def send_push_notification_via_raven_cloud(message, raven_settings):
 			# by default. The allow notifications field would be used in future when we expose
 			# this setting in the UI to provide an option to the user to opt-out of push
 			# notifications for a certain DM user
-			if is_dm_or_dm_thread or member.get("allow_notifications") == 1:
+			preference = member.get("notification_preference") or "All Messages"
+			is_mentioned = member.get("user_id") in mentions
+			if is_dm_or_dm_thread or (
+				member.get("allow_notifications") == 1
+				and (preference == "All Messages" or (preference == "Mentions Only" and is_mentioned))
+			):
 				users.append(member.get("user_id"))
 
 		if not users:
 			return
-
-		mentions = [user.get("user") for user in message.mentions]
 
 		replied_to = None
 
@@ -203,6 +208,57 @@ def send_push_notification_via_raven_cloud(message, raven_settings):
 
 	except Exception as e:
 		frappe.log_error(title="Raven Cloud Push Notification Error")
+
+
+def send_mention_notifications_via_frappe(message):
+	"""Send individual pushes to channel members who opted in to mentions only."""
+	mentions = {mention.user for mention in message.mentions}
+	if not mentions:
+		return
+
+	members = frappe.get_all(
+		"Raven Channel Member",
+		filters={
+			"channel_id": message.channel_id,
+			"user_id": ("in", list(mentions)),
+			"allow_notifications": 1,
+			"notification_preference": "Mentions Only",
+		},
+		fields=["user_id"],
+	)
+	if not members:
+		return
+
+	owner_name, owner_image = message.get_message_owner_details()
+	channel_doc = frappe.get_cached_doc("Raven Channel", message.channel_id)
+	channel_name = " in thread" if channel_doc.is_thread else f" in #{channel_doc.channel_name}"
+	content = truncate_notification_content(message.get_notification_message_content())
+	data = {
+		"message_id": message.name,
+		"channel_id": message.channel_id,
+		"raven_message_type": message.message_type,
+		"channel_type": "Channel",
+		"content": truncate_notification_content(message.content)
+		if message.message_type == "Text"
+		else message.file,
+		"from_user": message.owner,
+		"type": "New message",
+		"is_thread": "1" if channel_doc.is_thread else "0",
+		"creation": get_milliseconds_since_epoch(message.creation),
+	}
+
+	for member in members:
+		if member.user_id == message.owner:
+			continue
+		user = frappe.get_cached_value("Raven User", member.user_id, "user")
+		if user:
+			send_notification_to_user(
+				user_id=user,
+				user_image_path=owner_image,
+				title=f"{owner_name} mentioned you{channel_name}",
+				message=content,
+				data=data.copy(),
+			)
 
 
 def make_post_call_for_notification(messages, raven_settings):

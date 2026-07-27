@@ -9,6 +9,7 @@ export type Member = {
     type?: 'User' | 'Bot',
     availability_status?: 'Available' | 'Away' | 'Do not disturb' | 'Invisible' | '',
     allow_notifications?: 1 | 0,
+    notification_preference?: 'All Messages' | 'Mentions Only',
     channel_member_name?: string
 }
 

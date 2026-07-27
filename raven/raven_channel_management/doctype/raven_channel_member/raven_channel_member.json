@@ -17,7 +17,8 @@
   "linked_doctype",
   "linked_document",
   "notification_settings_section",
-  "allow_notifications"
+  "allow_notifications",
+  "notification_preference"
  ],
  "fields": [
   {
@@ -63,6 +64,13 @@
    "fieldname": "allow_notifications",
    "fieldtype": "Check",
    "label": "Allow notifications"
+  },
+  {
+   "default": "All Messages",
+   "fieldname": "notification_preference",
+   "fieldtype": "Select",
+   "label": "Notification Preference",
+   "options": "All Messages\nMentions Only"
   },
   {
    "fieldname": "column_break_adqk",

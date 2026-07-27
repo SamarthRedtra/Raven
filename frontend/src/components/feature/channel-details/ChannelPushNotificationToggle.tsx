@@ -2,8 +2,8 @@ import { Member } from '@/hooks/fetchers/useFetchChannelMembers'
 import useIsPushNotificationEnabled from '@/hooks/fetchers/useIsPushNotificationEnabled'
 import { UserContext } from '@/utils/auth/UserProvider'
 
-import { Box, Flex, Switch, Text } from '@radix-ui/themes'
-import { useFrappePostCall, useSWRConfig } from 'frappe-react-sdk'
+import { Box, Flex, Select, Switch, Text } from '@radix-ui/themes'
+import { useFrappePostCall, useFrappeUpdateDoc, useSWRConfig } from 'frappe-react-sdk'
 import { useContext } from 'react'
 import { toast } from 'sonner'
 
@@ -19,6 +19,7 @@ const ChannelPushNotificationToggle = ({ channelID, channelMember }: Props) => {
     const isPushAvailable = useIsPushNotificationEnabled()
 
     const { call } = useFrappePostCall('raven.api.notification.toggle_push_notification_for_channel')
+    const { updateDoc } = useFrappeUpdateDoc()
 
     const onToggle = () => {
         if (channelMember) {
@@ -51,6 +52,13 @@ const ChannelPushNotificationToggle = ({ channelID, channelMember }: Props) => {
 
     if (!channelMember) return null
 
+    const updatePreference = (notification_preference: 'All Messages' | 'Mentions Only') => {
+        if (!channelMember.channel_member_name) return
+        updateDoc('Raven Channel Member', channelMember.channel_member_name, { notification_preference })
+            .then(() => mutate(["channel_members", channelID]))
+            .catch(() => toast.error('Failed to update notification preference'))
+    }
+
     return (
         <Box className={'p-4 rounded-md border border-gray-6'}>
             <Flex justify={'between'}>
@@ -71,6 +79,18 @@ const ChannelPushNotificationToggle = ({ channelID, channelMember }: Props) => {
                         onCheckedChange={onToggle}
                         disabled={!isPushAvailable} />
                 </Flex>
+            </Flex>
+            <Flex direction='column' gap='1' mt='4'>
+                <Text as="label" weight='medium' size='2'>Notify me about</Text>
+                <Select.Root
+                    value={channelMember.notification_preference ?? 'All Messages'}
+                    onValueChange={(value) => updatePreference(value as 'All Messages' | 'Mentions Only')}>
+                    <Select.Trigger aria-label='Notification preference' />
+                    <Select.Content>
+                        <Select.Item value='All Messages'>All messages</Select.Item>
+                        <Select.Item value='Mentions Only'>Only when I am mentioned</Select.Item>
+                    </Select.Content>
+                </Select.Root>
             </Flex>
         </Box>
     )

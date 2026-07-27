@@ -2,7 +2,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useFrappePostCall, useSWRConfig } from 'frappe-react-sdk'
 import { ErrorBanner } from '@/components/layout/AlertBanner/ErrorBanner'
 import { Loader } from '@/components/common/Loader'
-import { Box, Button, Dialog, Flex, Text } from '@radix-ui/themes'
+import { Box, Button, Dialog, Flex, Select, Text } from '@radix-ui/themes'
 import { ChannelIcon } from '@/utils/layout/channelIcon'
 import { Suspense, lazy } from 'react'
 import { UserFields } from '@/utils/users/UserListProvider'
@@ -14,6 +14,7 @@ const AddMembersDropdown = lazy(() => import('../../selectDropdowns/AddMembersDr
 
 interface AddChannelMemberForm {
   add_members: UserFields[] | null
+  notification_preference: 'All Messages' | 'Mentions Only'
 }
 
 interface AddChannelMemberModalContentProps {
@@ -37,7 +38,8 @@ export const AddChannelMembersModalContent = ({ onClose }: AddChannelMemberModal
 
   const methods = useForm<AddChannelMemberForm>({
     defaultValues: {
-      add_members: null
+      add_members: null,
+      notification_preference: 'All Messages'
     }
   })
 
@@ -47,7 +49,8 @@ export const AddChannelMembersModalContent = ({ onClose }: AddChannelMemberModal
     if (data.add_members && data.add_members.length > 0) {
       call({
         channel_id: channelID,
-        members: data.add_members.map((member) => member.name)
+        members: data.add_members.map((member) => member.name),
+        notification_preference: data.notification_preference
       })
         .then(() => {
           toast.success("Members added")
@@ -101,6 +104,23 @@ export const AddChannelMembersModalContent = ({ onClose }: AddChannelMemberModal
                     </Suspense>
                     <ErrorText>{methods.formState.errors.add_members?.message}</ErrorText>
                   </Flex>
+                  <Controller
+                    control={control}
+                    name='notification_preference'
+                    render={({ field }) => (
+                      <Flex direction='column' gap='1'>
+                        <Text size='2' weight='medium'>Notification preference</Text>
+                        <Select.Root value={field.value} onValueChange={field.onChange}>
+                          <Select.Trigger aria-label='Notification preference' />
+                          <Select.Content>
+                            <Select.Item value='All Messages'>All messages</Select.Item>
+                            <Select.Item value='Mentions Only'>Mentions only</Select.Item>
+                          </Select.Content>
+                        </Select.Root>
+                        <Text size='1' color='gray'>Applies to every member selected above.</Text>
+                      </Flex>
+                    )}
+                  />
                 </Flex>
               </Box>
             </Flex>

@@ -26,4 +26,6 @@ export interface RavenChannelMember{
 	linked_document?: string
 	/**	Allow notifications : Check	*/
 	allow_notifications?: 0 | 1
+	/**	Notification Preference : Select	*/
+	notification_preference?: 'All Messages' | 'Mentions Only'
 }

@@ -28,16 +28,24 @@ def track_visit(channel_id: str):
 
 
 @frappe.whitelist(methods=["POST"])
-def add_channel_members(channel_id: str, members: list[str]):
+def add_channel_members(
+	channel_id: str, members: list[str], notification_preference: str = "All Messages"
+):
 	"""
 	Add members to a channel
 	"""
 
 	# Since this is a bulk operation, we need to disable cache invalidation (will be handled manually) and ignore permissions (since we already have permission to add members)
 
+	notification_preference = _notification_preference(notification_preference)
 	for member in members:
 		member_doc = frappe.get_doc(
-			{"doctype": "Raven Channel Member", "channel_id": channel_id, "user_id": member}
+			{
+				"doctype": "Raven Channel Member",
+				"channel_id": channel_id,
+				"user_id": member,
+				"notification_preference": notification_preference,
+			}
 		)
 		member_doc.flags.ignore_cache_invalidation = True
 		member_doc.insert()
@@ -47,3 +55,7 @@ def add_channel_members(channel_id: str, members: list[str]):
 
 	delete_channel_members_cache(channel_id)
 	return True
+
+
+def _notification_preference(value: str | None) -> str:
+	return "Mentions Only" if value == "Mentions Only" else "All Messages"

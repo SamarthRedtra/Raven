@@ -126,6 +126,7 @@ def get_channel_members(channel_id: str):
 			raven_channel_member.user_id,
 			raven_channel_member.is_admin,
 			raven_channel_member.allow_notifications,
+			raven_channel_member.notification_preference,
 			raven_user.type,
 		)
 		.where(raven_channel_member.channel_id == channel_id)
