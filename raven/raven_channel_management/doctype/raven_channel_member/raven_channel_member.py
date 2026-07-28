@@ -196,8 +196,7 @@ class RavenChannelMember(Document):
 				after_commit=True,
 			)
 
-		if not is_direct_message and self.receives_all_message_notifications():
-			subscribe_user_to_topic(self.channel_id, self.user_id)
+		self.sync_notification_subscription()
 
 		if not is_direct_message:
 
@@ -230,15 +229,7 @@ class RavenChannelMember(Document):
 		Check if the notification preference is changed and update the subscription
 		"""
 		if self.has_value_changed("allow_notifications") or self.has_value_changed("notification_preference"):
-			is_direct_message = frappe.get_cached_value(
-				"Raven Channel", self.channel_id, "is_direct_message"
-			)
-
-			if not is_direct_message:
-				if self.receives_all_message_notifications():
-					subscribe_user_to_topic(self.channel_id, self.user_id)
-				else:
-					unsubscribe_user_to_topic(self.channel_id, self.user_id)
+			self.sync_notification_subscription()
 
 		if self.has_value_changed("is_admin") and not self.flags.in_insert and not self.is_thread():
 			# Send a system message to the channel mentioning the member who became admin
@@ -263,6 +254,15 @@ class RavenChannelMember(Document):
 	def receives_all_message_notifications(self):
 		"""Whether this member should receive the channel's broadcast notifications."""
 		return self.allow_notifications and self.notification_preference != "Mentions Only"
+
+	def sync_notification_subscription(self):
+		"""Keep channel-topic delivery aligned with the member's notification preference."""
+		if frappe.get_cached_value("Raven Channel", self.channel_id, "is_direct_message"):
+			return
+		if self.receives_all_message_notifications():
+			subscribe_user_to_topic(self.channel_id, self.user_id)
+		else:
+			unsubscribe_user_to_topic(self.channel_id, self.user_id)
 
 	def is_thread(self):
 		return frappe.get_cached_value("Raven Channel", self.channel_id, "is_thread")
