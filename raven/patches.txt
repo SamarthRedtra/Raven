@@ -20,3 +20,4 @@ raven.patches.v2_7.clean_duplicate_poll_votes
 raven.patches.v2_7.migrate_poll_votes_to_poll_vote_selection
 raven.patches.v2_7.add_unique_constraint_on_poll_votes
 raven.patches.v2_7.sync_mention_only_notification_subscriptions
+raven.patches.v2_7.set_all_channel_members_to_mentions_only

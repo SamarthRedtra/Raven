@@ -66,7 +66,7 @@ def send_push_notification_via_raven_cloud(message, raven_settings):
 			# by default. The allow notifications field would be used in future when we expose
 			# this setting in the UI to provide an option to the user to opt-out of push
 			# notifications for a certain DM user
-			preference = member.get("notification_preference") or "All Messages"
+			preference = member.get("notification_preference") or "Mentions Only"
 			is_mentioned = member.get("user_id") in mentions
 			if is_dm_or_dm_thread or (
 				member.get("allow_notifications") == 1

@@ -66,7 +66,7 @@
    "label": "Allow notifications"
   },
   {
-   "default": "All Messages",
+   "default": "Mentions Only",
    "fieldname": "notification_preference",
    "fieldtype": "Select",
    "label": "Notification Preference",

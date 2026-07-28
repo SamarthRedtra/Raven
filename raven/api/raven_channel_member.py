@@ -29,7 +29,7 @@ def track_visit(channel_id: str):
 
 @frappe.whitelist(methods=["POST"])
 def add_channel_members(
-	channel_id: str, members: list[str], notification_preference: str = "All Messages"
+	channel_id: str, members: list[str], notification_preference: str = "Mentions Only"
 ):
 	"""
 	Add members to a channel
@@ -58,4 +58,4 @@ def add_channel_members(
 
 
 def _notification_preference(value: str | None) -> str:
-	return "Mentions Only" if value == "Mentions Only" else "All Messages"
+	return "All Messages" if value == "All Messages" else "Mentions Only"

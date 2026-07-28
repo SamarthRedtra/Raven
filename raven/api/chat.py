@@ -42,7 +42,7 @@ def get_channel_members(channel_id: str):
 				"availability_status": user_obj.availability_status,
 				"is_admin": channel_member.get("is_admin", 0),
 				"allow_notifications": channel_member.get("allow_notifications", 1),
-				"notification_preference": channel_member.get("notification_preference", "All Messages"),
+				"notification_preference": channel_member.get("notification_preference", "Mentions Only"),
 				"channel_member_name": channel_member.get("name", None),
 			}
 
@@ -61,7 +61,7 @@ def get_channel_members(channel_id: str):
 					"availability_status": user_obj.availability_status,
 					"is_admin": channel_member.is_admin,
 					"allow_notifications": channel_member.allow_notifications,
-					"notification_preference": channel_member.notification_preference or "All Messages",
+					"notification_preference": channel_member.notification_preference or "Mentions Only",
 					"channel_member_name": channel_member.name,
 				}
 

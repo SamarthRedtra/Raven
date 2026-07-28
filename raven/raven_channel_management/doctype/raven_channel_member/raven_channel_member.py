@@ -71,7 +71,7 @@ class RavenChannelMember(Document):
 			self.is_admin = 1
 
 		self.allow_notifications = 1
-		self.notification_preference = self.notification_preference or "All Messages"
+		self.notification_preference = self.notification_preference or "Mentions Only"
 
 	def after_delete(self):
 

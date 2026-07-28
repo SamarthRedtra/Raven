@@ -83,7 +83,7 @@ const ChannelPushNotificationToggle = ({ channelID, channelMember }: Props) => {
             <Flex direction='column' gap='1' mt='4'>
                 <Text as="label" weight='medium' size='2'>Notify me about</Text>
                 <Select.Root
-                    value={channelMember.notification_preference ?? 'All Messages'}
+                    value={channelMember.notification_preference ?? 'Mentions Only'}
                     onValueChange={(value) => updatePreference(value as 'All Messages' | 'Mentions Only')}>
                     <Select.Trigger aria-label='Notification preference' />
                     <Select.Content>

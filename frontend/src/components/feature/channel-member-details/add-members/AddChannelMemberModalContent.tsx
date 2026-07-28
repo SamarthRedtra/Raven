@@ -39,7 +39,7 @@ export const AddChannelMembersModalContent = ({ onClose }: AddChannelMemberModal
   const methods = useForm<AddChannelMemberForm>({
     defaultValues: {
       add_members: null,
-      notification_preference: 'All Messages'
+      notification_preference: 'Mentions Only'
     }
   })
 

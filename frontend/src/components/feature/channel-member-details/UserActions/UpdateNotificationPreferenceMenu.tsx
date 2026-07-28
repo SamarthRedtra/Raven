@@ -15,7 +15,7 @@ interface UpdateNotificationPreferenceMenuProps {
 
 export const UpdateNotificationPreferenceMenu = ({ member, onUpdate }: UpdateNotificationPreferenceMenuProps) => {
     const { updateDoc, loading } = useFrappeUpdateDoc()
-    const preference = member.notification_preference ?? 'All Messages'
+    const preference = member.notification_preference ?? 'Mentions Only'
 
     const updatePreference = (notification_preference: NotificationPreference) => {
         if (!member.channel_member_name || notification_preference === preference) return
