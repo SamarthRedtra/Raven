@@ -9,6 +9,7 @@ import { HStack } from '../Stack'
 import { getKeyboardMetaKeyString } from '@/utils/layout/keyboardKey'
 import { useIsDesktop } from '@/hooks/useMediaQuery'
 import MentionsButton from './MentionsButton'
+import RemindersButton from './RemindersButton'
 
 export const SidebarHeader = () => {
 
@@ -22,9 +23,14 @@ export const SidebarHeader = () => {
                     px='2'
                     align='center'
                     pt='2'
+                    gap='1'
+                    className='min-w-0'
                 >
                     <CommandMenuButton />
-                    <MentionsButton />
+                    <Flex align='center' gap='1' className='shrink-0'>
+                        <RemindersButton />
+                        <MentionsButton />
+                    </Flex>
                 </Flex>
             </header>
         )
@@ -40,6 +46,7 @@ export const SidebarHeader = () => {
                 height='48px'>
                 <Text as='span' size='6' className='cal-sans pl-1'>raven</Text>
                 <Flex align='center' gap='4' className='pr-1 sm:pr-0'>
+                    <RemindersButton />
                     <MentionsButton />
                     <SearchButton />
                     <ColorModeToggleButton />
@@ -60,7 +67,7 @@ const CommandMenuButton = () => {
         onClick={() => setOpen(true)}
         aria-label='Open command menu'
         title={__("Open command menu")}
-        className='bg-gray-3 hover:bg-gray-4 p-2 rounded-md flex justify-between items-center min-w-48 text-gray-11 sm:hover:text-gray-12'
+        className='bg-gray-3 hover:bg-gray-4 p-2 rounded-md flex justify-between items-center min-w-0 flex-1 overflow-hidden text-gray-11 sm:hover:text-gray-12'
         color='gray'
     >
         <HStack>

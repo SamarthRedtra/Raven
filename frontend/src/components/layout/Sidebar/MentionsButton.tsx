@@ -42,7 +42,7 @@ const MentionsButton = () => {
                     title={__("View mentions")}
                     color='gray'
                     variant='ghost'
-                    className='relative text-gray-11 sm:hover:text-gray-12 sm:hover:bg-transparent p-2 sm:px-4 data-[state=open]:bg-transparent data-[state=open]:text-gray-12'
+                    className='relative text-gray-11 sm:hover:text-gray-12 sm:hover:bg-transparent p-2 data-[state=open]:bg-transparent data-[state=open]:text-gray-12'
                 >
                     <LuAtSign className='text-lg sm:text-xl' />
                     {mentionsCount && mentionsCount?.message > 0 && <Box className='rounded-full absolute -right-0.5 -bottom-0.5 sm:right-1.5 sm:bottom-0 bg-red-11 dark:bg-red-9 text-white w-4 h-4 flex items-center justify-center'>

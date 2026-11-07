@@ -48,24 +48,28 @@ def get_channel_list(hide_archived: bool = False):
 
 	workspace_member = frappe.qb.DocType("Raven Workspace Member")
 
+	selected = [
+		channel.name,
+		channel.channel_name,
+		channel.type,
+		channel.channel_description,
+		channel.is_archived,
+		channel.is_direct_message,
+		channel.is_self_message,
+		channel.creation,
+		channel.owner,
+		channel.last_message_timestamp,
+		channel.last_message_details,
+		channel.pinned_messages_string,
+		channel.workspace,
+		channel_member.name.as_("member_id"),
+	]
+	if frappe.db.has_column("Raven Channel", "custom_project_completed"):
+		selected.append(channel.custom_project_completed)
+
 	query = (
 		frappe.qb.from_(channel)
-		.select(
-			channel.name,
-			channel.channel_name,
-			channel.type,
-			channel.channel_description,
-			channel.is_archived,
-			channel.is_direct_message,
-			channel.is_self_message,
-			channel.creation,
-			channel.owner,
-			channel.last_message_timestamp,
-			channel.last_message_details,
-			channel.pinned_messages_string,
-			channel.workspace,
-			channel_member.name.as_("member_id"),
-		)
+		.select(*selected)
 		.left_join(channel_member)
 		.on(
 			(channel.name == channel_member.channel_id) & (channel_member.user_id == frappe.session.user)

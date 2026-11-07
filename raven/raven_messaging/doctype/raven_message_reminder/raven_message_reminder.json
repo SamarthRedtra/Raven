@@ -1,0 +1,76 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2026-11-06 12:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "message",
+  "channel_id",
+  "remind_at",
+  "is_sent"
+ ],
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "User",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "message",
+   "fieldtype": "Link",
+   "label": "Message",
+   "options": "Raven Message",
+   "reqd": 1
+  },
+  {
+   "fieldname": "channel_id",
+   "fieldtype": "Link",
+   "label": "Channel",
+   "options": "Raven Channel",
+   "reqd": 1
+  },
+  {
+   "fieldname": "remind_at",
+   "fieldtype": "Datetime",
+   "in_standard_filter": 1,
+   "label": "Remind At",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_sent",
+   "fieldtype": "Check",
+   "label": "Sent"
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-06 12:00:00",
+ "module": "Raven Messaging",
+ "name": "Raven Message Reminder",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "Raven User",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
+  }
+ ],
+ "sort_field": "remind_at",
+ "sort_order": "ASC",
+ "states": [],
+ "track_changes": 1
+}

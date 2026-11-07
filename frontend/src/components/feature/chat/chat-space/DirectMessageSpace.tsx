@@ -10,7 +10,7 @@ interface DirectMessageSpaceProps {
 export const DirectMessageSpace = ({ channelData }: DirectMessageSpaceProps) => {
 
     return (
-        <Box>
+        <Box className="h-full min-h-0">
             <DMChannelHeader
                 channelData={channelData}
             />

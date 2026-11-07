@@ -154,7 +154,7 @@ const ChatStream = forwardRef(({ channelID, replyToMessage, showThreadButton = t
     }, []) // Only run once on mount since we're just observing the container
 
     return (
-        <div className='relative h-full flex flex-col overflow-y-auto pb-16 sm:pb-0' ref={scrollRef}>
+        <div className='relative h-full w-full min-w-0 flex flex-col overflow-y-auto overflow-x-hidden pb-16 sm:pb-0' ref={scrollRef}>
             <div ref={oldLoaderRef}>
                 {hasOlderMessages && !isLoading && <div className='flex w-full min-h-8 pb-4 justify-center items-center'>
                     <Loader />

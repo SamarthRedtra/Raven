@@ -309,7 +309,7 @@ const ChatBoxBodyContainer = ({ children }: { children: React.ReactNode }) => {
 
     const { threadID } = useParams()
 
-    return <div className={clsx("flex flex-col overflow-hidden px-2 pt-16 justify-end h-full", threadID ? "sm:pl-4" : "sm:px-4")}>
+    return <div className={clsx("flex flex-col overflow-hidden px-2 pt-16 justify-end h-full w-full min-w-0", threadID ? "sm:pl-4" : "sm:px-4")}>
         {children}
     </div>
 }

@@ -13,7 +13,7 @@ export const ChannelSpace = ({ channelData }: ChannelSpaceProps) => {
     // const { threadID } = useParams()
 
     return (
-        <Box>
+        <Box className="h-full min-h-0">
             <ChannelHeader channelData={channelData} />
             <ChatBoxBody channelData={channelData} />
         </Box>

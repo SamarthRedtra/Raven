@@ -34,7 +34,7 @@ export const ThreadHeader = ({ channelID }: { channelID?: string }) => {
     }
 
     return (
-        <header className='dark:bg-gray-2 bg-white fixed top-0 px-3 sm:w-[calc((100vw-var(--sidebar-width)-var(--space-8))/2)] w-screen' style={{ zIndex: 999 }}>
+        <header className='dark:bg-gray-2 bg-white fixed top-0 px-3 sm:left-[calc(var(--sidebar-width)+(100vw-var(--sidebar-width)-var(--space-8))/2)] sm:w-[calc((100vw-var(--sidebar-width)-var(--space-8))/2)] w-screen' style={{ zIndex: 999 }}>
             <Flex direction={'column'} gap='2' className='pt-3'>
                 <Flex justify={'between'} align={'center'}>
                     <Heading size='4' className='pl-1'>Thread</Heading>

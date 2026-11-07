@@ -8,7 +8,7 @@ export const PageHeader = ({ children }: PropsWithChildren) => {
     const { threadID } = useParams()
 
     return (
-        <header className='dark:bg-gray-2 bg-white fixed top-0' style={{ zIndex: 999 }}>
+        <header className='dark:bg-gray-2 bg-white fixed top-0 sm:left-[var(--sidebar-width)]' style={{ zIndex: 999 }}>
             <Box
                 py='2'
                 className={clsx('border-gray-4 sm:dark:border-gray-6 border-b px-4 sm:px-0 sm:ml-4',

@@ -2,6 +2,7 @@ import { Flex, Box } from '@radix-ui/themes'
 import { Outlet, useParams } from 'react-router-dom'
 import { lazy, Suspense, useContext, useEffect } from 'react'
 import { Sidebar } from '../components/layout/Sidebar/Sidebar'
+import { SidebarResizeHandle } from '../components/layout/Sidebar/SidebarResizeHandle'
 import { ChannelListProvider } from '../utils/channel/ChannelListProvider'
 import { UserListProvider } from '@/utils/users/UserListProvider'
 import { hasRavenUserRole } from '@/utils/roles'
@@ -102,8 +103,9 @@ const MainPageContent = () => {
         <ChannelListProvider>
             <Flex>
                 {!isMobile &&
-                    <Box className={`w-80 bg-gray-2 border-r-gray-3 border-r dark:bg-gray-1`} left="0" top='0' position="fixed">
+                    <Box className="w-[var(--sidebar-width)] overflow-hidden bg-gray-2 border-r-gray-3 border-r dark:bg-gray-1" left="0" top='0' position="fixed">
                         <Sidebar />
+                        <SidebarResizeHandle />
                     </Box>
                 }
                 <Box className='md:ml-[var(--sidebar-width)] w-[calc(100vw-var(--sidebar-width)-0rem)] dark:bg-gray-2'>

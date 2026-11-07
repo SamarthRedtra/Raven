@@ -75,7 +75,7 @@ export const SidebarItem = forwardRef<HTMLAnchorElement, SidebarItemProps>(({ to
         <NavLink
             to={to}
             end={end}
-            className='no-underline'
+            className='no-underline block min-w-0'
             ref={ref}
         >
             {({ isActive }) => {
@@ -84,7 +84,7 @@ export const SidebarItem = forwardRef<HTMLAnchorElement, SidebarItemProps>(({ to
                         gap='2'
                         align='center'
                         px='2'
-                        className={clsx('cursor-pointer text-gray-12 user-select-none rounded-md no-underline sm:hover:bg-gray-3 active:bg-gray-3', isActive ? activeClass : '', className)}
+                        className={clsx('cursor-pointer text-gray-12 user-select-none rounded-md no-underline sm:hover:bg-gray-3 active:bg-gray-3 min-w-0', isActive ? activeClass : '', className)}
                         {...props}>
                         {children}
                     </Flex>

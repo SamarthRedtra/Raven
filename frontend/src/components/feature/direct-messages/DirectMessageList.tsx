@@ -103,11 +103,11 @@ export const DirectMessageItemElement = ({ channel }: { channel: DMChannelWithUn
                 availabilityStatus={userData?.availability_status}
             />
         </SidebarIcon>
-        <Flex justify='between' width='100%'>
+        <Flex justify='between' className='min-w-0 flex-1'>
             <Text size={{
                 initial: '3',
                 md: '2'
-            }} className="text-ellipsis line-clamp-1" weight={showUnread ? 'bold' : 'medium'}>
+            }} className="min-w-0 truncate" weight={showUnread ? 'bold' : 'medium'}>
                 {channel.peer_user_id !== currentUser ? userData?.full_name ?? channel.peer_user_id ?? replaceCurrentUserFromDMChannelName(channel.channel_name, currentUser) : `${userData?.full_name} (You)`}
             </Text>
             {showUnread ? <SidebarBadge>{channel.unread_count}</SidebarBadge> : null}

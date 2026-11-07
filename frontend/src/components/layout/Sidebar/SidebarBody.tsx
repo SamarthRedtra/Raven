@@ -24,7 +24,13 @@ export const SidebarBody = () => {
     const { workspaceID } = useParams()
 
     const workspaceChannels = useMemo(() => {
-        return channels.filter((channel) => channel.workspace === workspaceID)
+        return channels.filter((channel) => channel.workspace === workspaceID && !channel.custom_project_completed)
+    }, [channels, workspaceID])
+
+    const completedChannels = useMemo(() => {
+        return channels
+            .filter((channel) => channel.workspace === workspaceID && channel.custom_project_completed)
+            .map((channel) => ({ ...channel, unread_count: 0 }))
     }, [channels, workspaceID])
 
     const { unreadChannels, readChannels, unreadDMs, readDMs } = useGetChannelUnreadCounts({
@@ -34,7 +40,7 @@ export const SidebarBody = () => {
     })
 
     return (
-        <ScrollArea type="hover" scrollbars="vertical" className='h-[calc(100vh-4rem)]'>
+        <ScrollArea type="hover" scrollbars="vertical" className='h-[calc(100vh-4rem)] w-full min-w-0'>
             <Flex direction='column' gap='2' className='overflow-x-hidden pb-12 sm:pb-0' px='2'>
                 <Flex direction='column' gap='1' className='pb-0.5'>
                     <ThreadsButton />
@@ -52,6 +58,7 @@ export const SidebarBody = () => {
                 <PinnedChannels unread_count={unread_count?.message} />
                 {(unreadChannels.length > 0 || unreadDMs.length > 0) && <UnreadList unreadChannels={unreadChannels} unreadDMs={unreadDMs} />}
                 <ChannelList channels={readChannels} />
+                {completedChannels.length > 0 && <ChannelList channels={completedChannels} label={__("Completed Projects")} showCreate={false} />}
                 <DirectMessageList dm_channels={readDMs} />
             </Flex>
         </ScrollArea>

@@ -19,11 +19,13 @@ import { BiDotsVerticalRounded } from "react-icons/bi"
 
 interface ChannelListProps {
     channels: ChannelWithUnreadCount[]
+    label?: string
+    showCreate?: boolean
 }
 
-export const ChannelList = ({ channels }: ChannelListProps) => {
+export const ChannelList = ({ channels, label = __("Channels"), showCreate = true }: ChannelListProps) => {
 
-    const [showData, setShowData] = useStickyState(true, 'expandChannelList')
+    const [showData, setShowData] = useStickyState(true, showCreate ? 'expandChannelList' : 'expandCompletedChannelList')
 
     const toggle = () => setShowData(d => !d)
 
@@ -37,7 +39,7 @@ export const ChannelList = ({ channels }: ChannelListProps) => {
     }, [channels, pinnedChannelIDs])
 
     const ref = useRef<HTMLDivElement>(null)
-    const [height, setHeight] = useState(ref?.current?.clientHeight ?? showData ? filteredChannels.length * (36) - 4 : 0)
+    const [height, setHeight] = useState(showData ? Math.max(filteredChannels.length * 36 - 4, 0) : 0)
 
     useLayoutEffect(() => {
         setHeight(ref.current?.clientHeight ?? 0)
@@ -48,11 +50,11 @@ export const ChannelList = ({ channels }: ChannelListProps) => {
             <SidebarGroupItem className={'gap-1 pl-1'}>
                 <Flex width='100%' justify='between' align='center' gap='2' pr='2' className="group">
                     <Flex align='center' gap='2' width='100%' onClick={toggle} className="cursor-default select-none">
-                        <SidebarGroupLabel>{__("Channels")}</SidebarGroupLabel>
+                        <SidebarGroupLabel>{label}</SidebarGroupLabel>
                     </Flex>
                     <Flex align='center' gap='1'>
-                        <CreateChannelButton />
-                        <ChannelListActions />
+                        {showCreate ? <CreateChannelButton /> : null}
+                        {showCreate ? <ChannelListActions /> : null}
                         <SidebarViewMoreButton onClick={toggle} expanded={showData} />
                     </Flex>
                 </Flex>
@@ -98,11 +100,11 @@ export const ChannelItemElement = ({ channel }: { channel: ChannelWithUnreadCoun
                 data-[state=open]:bg-gray-3
                 `}>
                     <ChannelIcon type={channel.type} size='18' />
-                    <Flex justify='between' align={'center'} width='100%'>
+                    <Flex justify='between' align='center' className='min-w-0 flex-1'>
                         <Text size={{
                             initial: '3',
                             md: '2'
-                        }} className="text-ellipsis line-clamp-1" as='span' weight={showUnread ? 'bold' : 'medium'}>{channel.channel_name}</Text>
+                        }} className="min-w-0 truncate" as='span' weight={showUnread ? 'bold' : 'medium'}>{channel.channel_name}</Text>
                         {showUnread ? <SidebarBadge>{channel.unread_count}</SidebarBadge> : null}
                     </Flex>
                 </SidebarItem>

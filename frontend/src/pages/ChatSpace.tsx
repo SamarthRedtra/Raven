@@ -4,7 +4,7 @@ import { ErrorBanner } from "@/components/layout/AlertBanner/ErrorBanner"
 import { FullPageLoader } from "@/components/layout/Loaders/FullPageLoader"
 import { useCurrentChannelData } from "@/hooks/useCurrentChannelData"
 import { useEffect } from "react"
-import { Box, Grid } from '@radix-ui/themes'
+import { Box, Flex, Grid, Text } from '@radix-ui/themes'
 import { Outlet, useParams, useSearchParams } from "react-router-dom"
 import { useSWRConfig } from "frappe-react-sdk"
 import { UnreadChannelCountItem, UnreadCountData } from "@/utils/channel/ChannelListProvider"
@@ -17,10 +17,16 @@ const ChatSpace = () => {
     // only if channelID is present render ChatSpaceArea component'
     const { channelID } = useParams<{ channelID: string }>()
     // const className = 'bg-white dark:from-accent-1 dark:to-95% dark:to-accent-2 dark:bg-gradient-to-b'
-    return <div className="scroll-smooth">
+    return <div className="scroll-smooth h-screen">
         {channelID && <ChatSpaceArea channelID={channelID} />}
     </div>
 
+}
+
+const MissingChannel = () => {
+    return <Flex align="center" justify="center" className="h-full px-6">
+        <Text size="2" color="gray" align="center">This channel is not available. Pick another channel from the sidebar.</Text>
+    </Flex>
 }
 
 export const Component = ChatSpace
@@ -41,9 +47,6 @@ const ChatSpaceArea = ({ channelID }: { channelID: string }) => {
     const setLastChannel = useSetAtom(lastChannelAtom)
 
     useEffect(() => {
-
-        // setting last visited channel in local storage
-        setLastChannel(channelID)
 
         const unread_count = cache.get('unread_channel_count')
 
@@ -82,15 +85,19 @@ const ChatSpaceArea = ({ channelID }: { channelID: string }) => {
 
     }, [channelID, baseMessage])
 
-    return <Grid columns={threadID && !isMobile ? "2" : "1"} gap="2" rows="repeat(2, 64px)" width="auto" className="dark:bg-gray-2 bg-white h-screen">
-        {threadID && isMobile ? null : <Box>
+    useEffect(() => {
+        if (channel) setLastChannel(channelID)
+    }, [channel, channelID, setLastChannel])
+
+    return <Grid columns={threadID && !isMobile ? "2" : "1"} gap="2" rows="1" width="auto" className="dark:bg-gray-2 bg-white h-full min-h-0 w-full">
+        {threadID && isMobile ? null : <Box className="h-full min-h-0 min-w-0 w-full overflow-hidden">
             {isLoading && <FullPageLoader />}
             <ErrorBanner error={error} />
             {channel ?
                 channel.type === "dm" ?
                     <DirectMessageSpace channelData={channel.channelData} />
                     : <ChannelSpace channelData={channel.channelData} />
-                : null}
+                : !isLoading && !error ? <MissingChannel /> : null}
         </Box>}
         <Outlet />
     </Grid>
