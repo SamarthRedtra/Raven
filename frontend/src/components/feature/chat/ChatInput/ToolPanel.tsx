@@ -13,7 +13,8 @@ export const ToolPanel = ({ children, ...props }: FlexProps) => {
             justify='between'
             align='center'
             gap='2'
-            className='border-t border-t-slate-5 bg-slate-2 rounded-b-radius4 min-w-0 max-w-full overflow-x-auto overflow-y-visible pr-2'
+            // Keep send/actions pinned; formatting icons scroll inside their own pane.
+            className='border-t border-t-slate-5 bg-slate-2 rounded-b-radius4 min-w-0 w-full max-w-full overflow-visible pr-1'
             p='1'
             {...props}
         >

@@ -52,6 +52,20 @@ const RemindMeSubmenu = ({ messageId }: { messageId: string }) => {
             <ContextMenu.SubContent
                 className='raven-remind-submenu min-w-[18rem] max-w-[min(100vw-1.5rem,24rem)] overflow-visible'
                 onCloseAutoFocus={(e) => e.preventDefault()}
+                /* Radix Sub closes on focus-outside even when focus moves into its own content (datepicker / button). */
+                onFocusOutside={(e) => e.preventDefault()}
+                onPointerDownOutside={(e) => {
+                    const target = e.target as HTMLElement | null
+                    if (target?.closest?.('.raven-remind-submenu, .raven-remind-datetime, .react-datepicker')) {
+                        e.preventDefault()
+                    }
+                }}
+                onInteractOutside={(e) => {
+                    const target = e.target as HTMLElement | null
+                    if (target?.closest?.('.raven-remind-submenu, .raven-remind-datetime, .react-datepicker')) {
+                        e.preventDefault()
+                    }
+                }}
             >
                 <ContextMenu.Item onSelect={() => remind(defaultInOneHour())}>In 1 hour</ContextMenu.Item>
                 <ContextMenu.Item onSelect={() => remind(tomorrowMorning())}>Tomorrow 9:00</ContextMenu.Item>
@@ -62,6 +76,7 @@ const RemindMeSubmenu = ({ messageId }: { messageId: string }) => {
                 <div
                     className='px-1'
                     onPointerDown={stopMenuDismiss}
+                    onMouseDown={stopMenuDismiss}
                     onKeyDown={(e) => e.stopPropagation()}
                 >
                     <DateTimePicker
@@ -72,7 +87,7 @@ const RemindMeSubmenu = ({ messageId }: { messageId: string }) => {
                         display='inline'
                     />
                 </div>
-                <Flex justify='end' mt='2' px='2' pb='1'>
+                <Flex justify='end' mt='2' px='2' pb='1' onPointerDown={stopMenuDismiss} onMouseDown={stopMenuDismiss}>
                     <Button size='2' onClick={confirmCustom} disabled={!remindAt}>
                         Set reminder
                     </Button>

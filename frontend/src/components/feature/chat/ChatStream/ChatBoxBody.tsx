@@ -317,7 +317,8 @@ const ChatBoxBodyContainer = ({ children }: { children: React.ReactNode }) => {
     return <div className={clsx(
         "grid h-full min-h-0 w-full min-w-0 flex-1 overflow-hidden pt-14 pb-3",
         "pl-2 pr-4 sm:pl-4 sm:pr-8",
-        "grid-rows-[minmax(0,1fr)_auto] overflow-x-clip overflow-y-hidden",
+        // Do not clip the composer horizontally — send button must stay visible.
+        "grid-rows-[minmax(0,1fr)_auto] overflow-x-hidden overflow-y-hidden",
         threadID && "sm:pl-4"
     )}>
         {children}
