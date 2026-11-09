@@ -38,7 +38,7 @@ export const FileDrop = forwardRef((props: FileDropProps, ref) => {
 
     const isSiteInReadOnlyMode = useIsSiteInReadOnlyMode()
 
-    const { files, onFileChange, maxFiles, accept, maxFileSize, children, height, width, areaHeight, ...compProps } = props
+    const { files, onFileChange, maxFiles, accept, maxFileSize, children, height, width, areaHeight, className, style, ...compProps } = props
 
     const [onDragEnter, setOnDragEnter] = useState(false)
 
@@ -84,8 +84,12 @@ export const FileDrop = forwardRef((props: FileDropProps, ref) => {
     return (
         <Flex
             direction='column'
+            className={clsx('min-h-0', className)}
             style={{
-                height: height ?? 'calc(100vh - 80px)',
+                // Prefer an explicit height; allow callers to use flex growth via style/className.
+                ...(height && height !== 'auto' ? { height } : height === 'auto' ? {} : { height: 'calc(100vh - 80px)' }),
+                minHeight: 0,
+                ...(typeof style === 'object' && style ? style : {}),
             }}
             width='100%'
             {...getRootProps()}

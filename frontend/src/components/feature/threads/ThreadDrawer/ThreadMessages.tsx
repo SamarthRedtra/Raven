@@ -159,11 +159,13 @@ export const ThreadMessages = ({ threadMessage }: { threadMessage: Message }) =>
 
 
     return (
-        <Flex direction='column' justify={'between'} gap='0' className="h-full p-4">
+        <div className="grid h-full min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-0 overflow-hidden p-4">
             <FileDrop
                 files={files}
                 areaHeight="h-[calc(100vh-72px)]"
-                height="100%"
+                height="auto"
+                className="flex min-h-0 h-full w-full flex-col overflow-hidden"
+                style={{ minHeight: 0 }}
                 width={'w-[calc((100vw-var(--sidebar-width)-var(--space-8)-var(--space-5))/2)]'}
                 ref={fileInputRef}
                 onFileChange={setFiles}
@@ -180,11 +182,11 @@ export const ThreadMessages = ({ threadMessage }: { threadMessage: Message }) =>
                     isChannelReadOnly={!isUserInChannel}
                 />
                 <AIEvent channelID={threadID ?? ''} />
-
-                {!isUserInChannel && <JoinChannelBox
-                    user={user} />}
-
-                {isUserInChannel && <Stack>
+            </FileDrop>
+            <Flex direction="column" gap="0" className="min-h-0 shrink-0">
+            {!isUserInChannel && <JoinChannelBox user={user} />}
+            {isUserInChannel && (
+                <Stack className="shrink-0 z-20 bg-white dark:bg-gray-2 pt-1 pb-1">
                     <TypingIndicator channel={threadID ?? ''} />
                     <Tiptap
                         key={threadID}
@@ -209,8 +211,9 @@ export const ThreadMessages = ({ threadMessage }: { threadMessage: Message }) =>
                             </Flex>}
                         </Flex>}
                     />
-                </Stack>}
-            </FileDrop>
-        </Flex>
+                </Stack>
+            )}
+            </Flex>
+        </div>
     )
 }

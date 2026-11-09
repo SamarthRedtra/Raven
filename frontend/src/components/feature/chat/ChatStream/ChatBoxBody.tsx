@@ -222,12 +222,51 @@ export const ChatBoxBody = ({ channelData }: ChatBoxBodyProps) => {
 
     const isSiteInReadOnlyMode = useIsSiteInReadOnlyMode()
 
+    const composer = canUserSendMessage ? (
+        <Stack className="shrink-0 z-20 min-w-0 max-w-full bg-white dark:bg-gray-2 pt-1 pb-1">
+            <TypingIndicator channel={channelData.name} />
+            {isSiteInReadOnlyMode ? <Box p='3' className="border border-gray-6 rounded-md bg-slate-1 animate-fadein text-center">
+                <Text as='span' size='2' weight='regular' color='gray'>
+                    The site is in read-only mode. Please wait while the site is being updated.
+                </Text>
+            </Box> :
+                <Tiptap
+                    key={channelData.name}
+                    channelID={channelData.name}
+                    fileProps={{
+                        fileInputRef,
+                        addFile
+                    }}
+                    ref={tiptapRef}
+                    onUpArrow={onUpArrowPressed}
+                    clearReplyMessage={clearSelectedMessage}
+                    channelMembers={channelMembers}
+                    onUserType={onUserType}
+                    replyMessage={selectedMessage}
+                    sessionStorageKey={`tiptap-${channelData.name}`}
+                    onMessageSend={sendMessage}
+                    messageSending={loading}
+                    slotBefore={<Flex direction='column' justify='center' hidden={!selectedMessage && !files.length}>
+                        {selectedMessage && <PreviousMessagePreview selectedMessage={selectedMessage} />}
+                        {files && files.length > 0 && <Flex gap='2' width='100%' align='stretch' px='2' p='2' wrap='wrap'>
+                            {files.map((f: CustomFile) => <Box className="grow-0" key={f.fileID}><FileListItem file={f} uploadProgress={fileUploadProgress} removeFile={() => removeFile(f.fileID)} /></Box>)}
+                        </Flex>}
+                        {files.length !== 0 && files.some((f: CustomFile) => isImageFile(f)) && <CompressImageCheckbox compressImages={compressImages} setCompressImages={setCompressImages} />}
+                    </Flex>}
+                />
+            }
+        </Stack>
+    ) : null
+
     return (
         <ChatBoxBodyContainer>
             <FileDrop
                 files={files}
                 ref={fileInputRef}
                 onFileChange={setFiles}
+                height="auto"
+                className="flex min-h-0 h-full w-full flex-col overflow-hidden"
+                style={{ minHeight: 0 }}
                 width={threadID ? 'w-[calc((100vw-var(--sidebar-width)-var(--space-8))/2)]' : undefined}
                 maxFiles={10}
                 maxFileSize={10000000}>
@@ -240,43 +279,8 @@ export const ChatBoxBody = ({ channelData }: ChatBoxBodyProps) => {
                     replyToMessage={handleReplyAction}
                     isChannelReadOnly={!channelMemberProfile}
                 />
-                {canUserSendMessage &&
-                    <Stack>
-                        <TypingIndicator channel={channelData.name} />
-                        {isSiteInReadOnlyMode ? <Box p='3' className="border border-gray-6 rounded-md bg-slate-1 animate-fadein text-center">
-                            <Text as='span' size='2' weight='regular' color='gray'>
-                                The site is in read-only mode. Please wait while the site is being updated.
-                            </Text>
-                        </Box> :
-                            <Tiptap
-                                key={channelData.name}
-                                channelID={channelData.name}
-                                fileProps={{
-                                    fileInputRef,
-                                    addFile
-                                }}
-                                ref={tiptapRef}
-                                onUpArrow={onUpArrowPressed}
-                                clearReplyMessage={clearSelectedMessage}
-                                channelMembers={channelMembers}
-                                onUserType={onUserType}
-                                // placeholder={randomPlaceholder}
-                                replyMessage={selectedMessage}
-                                sessionStorageKey={`tiptap-${channelData.name}`}
-                                onMessageSend={sendMessage}
-                                messageSending={loading}
-                                slotBefore={<Flex direction='column' justify='center' hidden={!selectedMessage && !files.length}>
-                                    {selectedMessage && <PreviousMessagePreview selectedMessage={selectedMessage} />}
-                                    {files && files.length > 0 && <Flex gap='2' width='100%' align='stretch' px='2' p='2' wrap='wrap'>
-                                        {files.map((f: CustomFile) => <Box className="grow-0" key={f.fileID}><FileListItem file={f} uploadProgress={fileUploadProgress} removeFile={() => removeFile(f.fileID)} /></Box>)}
-                                    </Flex>}
-                                    {files.length !== 0 && files.some((f: CustomFile) => isImageFile(f)) && <CompressImageCheckbox compressImages={compressImages} setCompressImages={setCompressImages} />}
-                                </Flex>}
-                            />
-                        }
-                    </Stack>
-                }
-
+            </FileDrop>
+            <Flex direction="column" gap="0" className="min-h-0 shrink-0">
                 {shouldShowJoinBox ?
                     <JoinChannelBox
                         channelData={channelData}
@@ -286,7 +290,8 @@ export const ChatBoxBody = ({ channelData }: ChatBoxBodyProps) => {
                     isArchived={channelData.is_archived}
                     isMemberAdmin={channelMemberProfile?.is_admin}
                 />
-            </FileDrop>
+                {composer}
+            </Flex>
         </ChatBoxBodyContainer>
     )
 
@@ -309,7 +314,12 @@ const ChatBoxBodyContainer = ({ children }: { children: React.ReactNode }) => {
 
     const { threadID } = useParams()
 
-    return <div className={clsx("flex flex-col overflow-hidden px-2 pt-16 justify-end h-full w-full min-w-0", threadID ? "sm:pl-4" : "sm:px-4")}>
+    return <div className={clsx(
+        "grid h-full min-h-0 w-full min-w-0 flex-1 overflow-hidden pt-14 pb-3",
+        "pl-2 pr-4 sm:pl-4 sm:pr-8",
+        "grid-rows-[minmax(0,1fr)_auto] overflow-x-clip overflow-y-hidden",
+        threadID && "sm:pl-4"
+    )}>
         {children}
     </div>
 }

@@ -602,7 +602,7 @@ const Tiptap = forwardRef(({ isEdit, slotBefore, fileProps, onMessageSend, onUpA
     }
 
     return (
-        <Box className='border rounded-radius2 border-gray-300 dark:border-gray-500 dark:bg-gray-3'>
+        <Box className='border rounded-radius2 border-gray-300 dark:border-gray-500 dark:bg-gray-3 mb-1 max-w-full min-w-0 shrink-0 overflow-visible'>
             <EditorContext.Provider value={{ editor }}>
                 {slotBefore}
                 <EditorContent editor={editor} />

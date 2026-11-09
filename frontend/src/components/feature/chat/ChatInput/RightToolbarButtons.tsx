@@ -41,7 +41,7 @@ export type RightToolbarButtonsProps = {
  */
 export const RightToolbarButtons = ({ fileProps, channelID, isEdit, ...sendProps }: RightToolbarButtonsProps) => {
     return (
-        <Flex gap='2' align='center' px='1' py='1'>
+        <Flex gap='2' align='center' px='1' py='1' className='shrink-0'>
             <Flex gap='3' align='center'>
                 {!isEdit && channelID && <DocumentLinkButton channelID={channelID} />}
                 <MentionButtons />

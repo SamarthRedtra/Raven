@@ -3,7 +3,6 @@ import { FileMessage, Message } from '../../../../../../../types/Messaging/Messa
 import { useContext } from 'react'
 import { UserContext } from '@/utils/auth/UserProvider'
 import { BiBookmarkMinus, BiBookmarkPlus, BiCopy, BiDownload, BiLink, BiPaperclip, BiTrash } from 'react-icons/bi'
-import { LuAlarmClock } from 'react-icons/lu'
 import { FrappeConfig, FrappeContext } from 'frappe-react-sdk'
 import { useMessageCopy } from './useMessageCopy'
 import { RetractVote } from './RetractVote'
@@ -17,6 +16,7 @@ import { CreateThreadContextItem } from './QuickActions/CreateThreadButton'
 import { RiPushpinLine, RiUnpinLine } from 'react-icons/ri'
 import MessageActionSubMenu from './MessageActionSubMenu'
 import { useParams } from 'react-router-dom'
+import RemindMeSubmenu from './RemindMeSubmenu'
 
 export interface MessageContextMenuProps {
     message?: Message | null,
@@ -59,7 +59,7 @@ export const MessageContextMenu = ({ message, onDelete, onEdit, onReply, onForwa
                     </Flex>
                 </ContextMenu.Item>}
                 {message && !message.is_thread && showThreadButton && <CreateThreadContextItem messageID={message.name} />}
-                <RemindMe messageId={message.name} />
+                <RemindMeSubmenu messageId={message.name} />
                 <CopyMessageLink message={message} />
                 <ContextMenu.Separator />
                 <ContextMenu.Group>
@@ -230,41 +230,3 @@ const PinMessageAction = ({ message }: { message: Message }) => {
 
 }
 
-const stamp = (date: Date) => {
-    const pad = (value: number) => String(value).padStart(2, '0')
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:00`
-}
-
-const RemindMe = ({ messageId }: { messageId: string }) => {
-    const { call } = useContext(FrappeContext) as FrappeConfig
-    const remind = (when: string) => {
-        call.post('raven.api.reminders.create_reminder', { message: messageId, remind_at: when })
-            .then(() => toast.success('Reminder set'))
-            .catch((error) => toast.error('Could not set the reminder', { description: getErrorMessage(error) }))
-    }
-    const inOneHour = () => stamp(new Date(Date.now() + 60 * 60 * 1000))
-    const tomorrowMorning = () => {
-        const date = new Date()
-        date.setDate(date.getDate() + 1)
-        date.setHours(9, 0, 0, 0)
-        return stamp(date)
-    }
-    return (
-        <ContextMenu.Sub>
-            <ContextMenu.SubTrigger>
-                <Flex gap='2' width='100%' align='center'>
-                    <LuAlarmClock size='18' />
-                    Remind me
-                </Flex>
-            </ContextMenu.SubTrigger>
-            <ContextMenu.SubContent>
-                <ContextMenu.Item onSelect={() => remind(inOneHour())}>In 1 hour</ContextMenu.Item>
-                <ContextMenu.Item onSelect={() => remind(tomorrowMorning())}>Tomorrow 9:00</ContextMenu.Item>
-                <ContextMenu.Item onSelect={() => {
-                    const value = window.prompt('Remind at (YYYY-MM-DD HH:MM)')
-                    if (value) remind(value.length === 16 ? `${value}:00` : value)
-                }}>Pick date and time</ContextMenu.Item>
-            </ContextMenu.SubContent>
-        </ContextMenu.Sub>
-    )
-}

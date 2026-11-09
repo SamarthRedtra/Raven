@@ -145,3 +145,107 @@ html header button {
         opacity: 1;
     }
 }
+
+.raven-remind-submenu {
+    overflow: visible !important;
+}
+
+.raven-remind-datetime .react-datepicker {
+    display: flex !important;
+    align-items: flex-start !important;
+    width: auto !important;
+    max-width: 100%;
+    border: none !important;
+    font-family: inherit;
+}
+
+.raven-remind-datetime .react-datepicker__month-container {
+    float: none !important;
+    width: auto !important;
+}
+
+.raven-remind-datetime .react-datepicker__time-container {
+    float: none !important;
+    width: 6.5rem !important;
+    border-left: 1px solid var(--gray-6);
+    align-self: flex-start;
+}
+
+.raven-inline-datepicker.react-datepicker {
+    background: transparent !important;
+    color: inherit;
+}
+
+.raven-remind-datetime .react-datepicker__header {
+    background: transparent;
+    border-bottom: 1px solid var(--gray-6);
+}
+
+.raven-remind-datetime .react-datepicker__time-box {
+    width: 6.5rem !important;
+}
+
+.raven-remind-datetime .react-datepicker__time-list {
+    width: 6.5rem !important;
+    max-height: 11.5rem !important;
+    background: var(--gray-2) !important;
+    scrollbar-width: thin;
+}
+
+.raven-remind-datetime .react-datepicker__time-list-item {
+    height: auto !important;
+    padding: 0.35rem 0.5rem !important;
+    line-height: 1.25 !important;
+    white-space: nowrap;
+    background: transparent !important;
+    color: inherit;
+}
+
+.raven-remind-datetime .react-datepicker__time-list-item:hover {
+    background: var(--accent-a3) !important;
+    color: var(--gray-12) !important;
+}
+
+.raven-remind-datetime .react-datepicker__time-list-item--selected,
+.raven-remind-datetime .react-datepicker__time-list-item--selected:hover {
+    background: #5b5bd6 !important;
+    color: #fff !important;
+    font-weight: 500;
+}
+
+.raven-remind-datetime .raven-datepicker-day-selected,
+.raven-remind-datetime .react-datepicker__day--selected,
+.raven-remind-datetime .react-datepicker__day--keyboard-selected {
+    background: #5b5bd6 !important;
+    color: #fff !important;
+    border-radius: 9999px;
+}
+
+.raven-remind-datetime .react-datepicker__day:hover {
+    border-radius: 9999px;
+    background: color-mix(in srgb, #5b5bd6 15%, transparent);
+}
+
+.raven-remind-datetime .react-datepicker__month-select,
+.raven-remind-datetime .react-datepicker__year-select {
+    background: var(--gray-3);
+    color: var(--gray-12);
+    border: 1px solid var(--gray-6);
+    border-radius: 0.25rem;
+    padding: 0.1rem 0.25rem;
+}
+
+.dark .raven-remind-datetime .react-datepicker__time-list {
+    background: var(--gray-4) !important;
+}
+
+.dark .raven-remind-datetime .react-datepicker__time-list-item {
+    color: var(--gray-12);
+}
+
+.dark .raven-remind-datetime .react-datepicker__day-name,
+.dark .raven-remind-datetime .react-datepicker__day,
+.dark .raven-remind-datetime .react-datepicker__current-month,
+.dark .raven-remind-datetime .react-datepicker-time__header {
+    color: var(--gray-12);
+}

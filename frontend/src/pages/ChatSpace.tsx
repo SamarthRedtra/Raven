@@ -17,7 +17,7 @@ const ChatSpace = () => {
     // only if channelID is present render ChatSpaceArea component'
     const { channelID } = useParams<{ channelID: string }>()
     // const className = 'bg-white dark:from-accent-1 dark:to-95% dark:to-accent-2 dark:bg-gradient-to-b'
-    return <div className="scroll-smooth h-screen">
+    return <div className="h-full min-h-0 flex flex-1 flex-col overflow-hidden">
         {channelID && <ChatSpaceArea channelID={channelID} />}
     </div>
 
@@ -89,8 +89,8 @@ const ChatSpaceArea = ({ channelID }: { channelID: string }) => {
         if (channel) setLastChannel(channelID)
     }, [channel, channelID, setLastChannel])
 
-    return <Grid columns={threadID && !isMobile ? "2" : "1"} gap="2" rows="1" width="auto" className="dark:bg-gray-2 bg-white h-full min-h-0 w-full">
-        {threadID && isMobile ? null : <Box className="h-full min-h-0 min-w-0 w-full overflow-hidden">
+    return <Grid columns={threadID && !isMobile ? "2" : "1"} gap="2" rows="1" width="auto" className="dark:bg-gray-2 bg-white h-full min-h-0 max-h-full w-full overflow-hidden">
+        {threadID && isMobile ? null : <Box className="flex h-full min-h-0 max-h-full min-w-0 w-full flex-col overflow-hidden">
             {isLoading && <FullPageLoader />}
             <ErrorBanner error={error} />
             {channel ?

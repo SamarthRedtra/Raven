@@ -101,14 +101,14 @@ const MainPageContent = () => {
 
     return <UserListProvider>
         <ChannelListProvider>
-            <Flex>
+            <Flex className="h-[100dvh] max-h-[100dvh] min-h-0 overflow-hidden">
                 {!isMobile &&
                     <Box className="w-[var(--sidebar-width)] overflow-hidden bg-gray-2 border-r-gray-3 border-r dark:bg-gray-1" left="0" top='0' position="fixed">
                         <Sidebar />
                         <SidebarResizeHandle />
                     </Box>
                 }
-                <Box className='md:ml-[var(--sidebar-width)] w-[calc(100vw-var(--sidebar-width)-0rem)] dark:bg-gray-2'>
+                <Box className='w-full md:ml-[var(--sidebar-width)] md:mr-4 md:w-[calc(100vw-var(--sidebar-width)-var(--space-4))] dark:bg-gray-2 h-full min-h-0 overflow-hidden flex flex-col'>
                     <Outlet />
                 </Box>
             </Flex>
