@@ -552,8 +552,8 @@ const Tiptap = forwardRef(({ isEdit, slotBefore, fileProps, onMessageSend, onUpA
 
 
     if (isMobile) {
-        return <Box className={clsx('pt-2 pb-8 w-full bg-white dark:bg-gray-2 z-50 border-t border-t-gray-3 dark:border-t-gray-3',
-            isEdit ? 'bg-transparent dark:bg-transparent' : 'fixed bottom-0 left-0 px-4'
+        return <Box className={clsx('pt-2 pb-8 w-full border-t border-t-gray-3 dark:border-t-gray-3 z-[60]',
+            isEdit ? 'bg-transparent dark:bg-transparent' : 'fixed bottom-0 left-0 px-4 bg-white dark:bg-gray-2'
         )}>
             <EditorContext.Provider value={{ editor }}>
                 {slotBefore}

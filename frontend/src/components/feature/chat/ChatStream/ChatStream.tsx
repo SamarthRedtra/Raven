@@ -4,15 +4,16 @@ import { EditMessageDialog, useEditMessage } from '../ChatMessage/MessageActions
 import { MessageItem } from '../ChatMessage/MessageItem'
 import { ChannelHistoryFirstMessage } from '@/components/layout/EmptyState/EmptyState'
 import useChatStream from './useChatStream'
-import { forwardRef, MutableRefObject, useEffect, useImperativeHandle } from 'react'
+import { forwardRef, MutableRefObject, useCallback, useEffect, useImperativeHandle, useState } from 'react'
 import { Loader } from '@/components/common/Loader'
 import ChatStreamLoader from './ChatStreamLoader'
 import clsx from 'clsx'
 import { DateSeparator } from '@/components/layout/Divider/DateSeparator'
 import { useInView } from 'react-intersection-observer'
-import { Button } from '@radix-ui/themes'
-import { FiArrowDown } from 'react-icons/fi'
+import { Button, Flex, IconButton } from '@radix-ui/themes'
+import { FiArrowDown, FiArrowUp } from 'react-icons/fi'
 import { ErrorBanner } from '@/components/layout/AlertBanner/ErrorBanner'
+import { useIsMobile } from '@/hooks/useMediaQuery'
 import { ForwardMessageDialog, useForwardMessage } from '../ChatMessage/MessageActions/ForwardMessage'
 import AttachFileToDocumentDialog, { useAttachFileToDocument } from '../ChatMessage/MessageActions/AttachFileToDocument'
 import { ReactionAnalyticsDialog, useMessageReactionAnalytics } from '../ChatMessage/MessageActions/MessageReactionAnalytics'
@@ -72,11 +73,17 @@ type Props = {
     pinnedMessagesString?: string,
     onModalClose?: () => void,
     isChannelReadOnly?: boolean,
+    focusComposer?: () => void,
 }
 
-const ChatStream = forwardRef(({ channelID, replyToMessage, showThreadButton = true, pinnedMessagesString, scrollRef, onModalClose, isChannelReadOnly = false }: Props, ref) => {
+const NEAR_EDGE_PX = 80
+
+const ChatStream = forwardRef(({ channelID, replyToMessage, showThreadButton = true, pinnedMessagesString, scrollRef, onModalClose, isChannelReadOnly = false, focusComposer }: Props, ref) => {
 
     const { messages, hasOlderMessages, loadOlderMessages, goToLatestMessages, hasNewMessages, error, loadNewerMessages, isLoading, highlightedMessage, scrollToMessage } = useChatStream(channelID, scrollRef, pinnedMessagesString)
+    const isMobile = useIsMobile()
+    const [showScrollTop, setShowScrollTop] = useState(false)
+    const [showScrollEnd, setShowScrollEnd] = useState(false)
     const { setDeleteMessage, ...deleteProps } = useDeleteMessage(onModalClose)
 
     const { setEditMessage, ...editProps } = useEditMessage(onModalClose)
@@ -153,6 +160,34 @@ const ChatStream = forwardRef(({ channelID, replyToMessage, showThreadButton = t
         }
     }, []) // Only run once on mount since we're just observing the container
 
+    const updateScrollControls = useCallback(() => {
+        const el = scrollRef.current
+        if (!el) return
+        const { scrollTop, scrollHeight, clientHeight } = el
+        setShowScrollTop(scrollTop > NEAR_EDGE_PX)
+        setShowScrollEnd(scrollHeight - scrollTop - clientHeight > NEAR_EDGE_PX || hasNewMessages)
+    }, [scrollRef, hasNewMessages])
+
+    useEffect(() => {
+        const el = scrollRef.current
+        if (!el) return
+        updateScrollControls()
+        el.addEventListener('scroll', updateScrollControls, { passive: true })
+        return () => el.removeEventListener('scroll', updateScrollControls)
+    }, [scrollRef, updateScrollControls, messages])
+
+    const scrollToTop = useCallback(() => {
+        scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+    }, [scrollRef])
+
+    const scrollToEnd = useCallback(() => {
+        if (hasNewMessages) {
+            goToLatestMessages()
+            return
+        }
+        scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
+    }, [goToLatestMessages, hasNewMessages, scrollRef])
+
     return (
         <div className='relative flex-1 min-h-0 w-full min-w-0 flex flex-col overflow-y-auto overflow-x-hidden pb-16 sm:pb-0' ref={scrollRef}>
             <div ref={oldLoaderRef}>
@@ -163,7 +198,7 @@ const ChatStream = forwardRef(({ channelID, replyToMessage, showThreadButton = t
             {!isLoading && !hasOlderMessages && <ChannelHistoryFirstMessage channelID={channelID ?? ''} />}
             {isLoading && <ChatStreamLoader />}
             {error && <ErrorBanner error={error} />}
-            <div className={clsx('flex flex-col pb-4 z-50 transition-opacity duration-400 ease-ease-out-cubic', isLoading ? 'opacity-0' : 'opacity-100')}>
+            <div className={clsx('flex flex-col pb-4 z-0 transition-opacity duration-400 ease-ease-out-cubic', isLoading ? 'opacity-0' : 'opacity-100')}>
                 {messages?.map(message => {
                     if (message.message_type === 'date') {
                         return <DateSeparator key={`date-${message.creation}`} id={`date-${message.creation}`} className='p-2 z-10 relative'>
@@ -186,6 +221,7 @@ const ChatStream = forwardRef(({ channelID, replyToMessage, showThreadButton = t
                                     setDeleteMessage={setDeleteMessage}
                                     setReactionMessage={setReactionMessage}
                                     isChannelReadOnly={isChannelReadOnly}
+                                    focusComposer={focusComposer}
                                 />
                             </div>
                         </div>
@@ -199,7 +235,7 @@ const ChatStream = forwardRef(({ channelID, replyToMessage, showThreadButton = t
                 </div>
             </div>}
 
-            {hasNewMessages && <div className='fixed bottom-36 z-50 right-5'>
+            {hasNewMessages && !isMobile && <div className='fixed bottom-36 z-[55] right-5'>
                 <Button
                     className='shadow-lg'
                     onClick={goToLatestMessages}>
@@ -207,6 +243,41 @@ const ChatStream = forwardRef(({ channelID, replyToMessage, showThreadButton = t
                     <FiArrowDown size={18} />
                 </Button>
             </div>}
+
+            {isMobile && (showScrollTop || showScrollEnd) && (
+                <Flex
+                    direction='column'
+                    gap='2'
+                    className='fixed right-4 bottom-28 z-[55]'
+                >
+                    {showScrollTop && (
+                        <IconButton
+                            size='3'
+                            radius='full'
+                            variant='solid'
+                            highContrast
+                            className='shadow-lg'
+                            aria-label='Scroll to top'
+                            onClick={scrollToTop}
+                        >
+                            <FiArrowUp size={18} />
+                        </IconButton>
+                    )}
+                    {showScrollEnd && (
+                        <IconButton
+                            size='3'
+                            radius='full'
+                            variant='solid'
+                            highContrast
+                            className='shadow-lg'
+                            aria-label={hasNewMessages ? 'Scroll to new messages' : 'Scroll to end'}
+                            onClick={scrollToEnd}
+                        >
+                            <FiArrowDown size={18} />
+                        </IconButton>
+                    )}
+                </Flex>
+            )}
             <DeleteMessageDialog {...deleteProps} />
             <EditMessageDialog {...editProps} />
             <ForwardMessageDialog {...forwardProps} />

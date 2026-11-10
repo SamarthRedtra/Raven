@@ -57,14 +57,13 @@ export const UnreadList = ({ unreadChannels, unreadDMs }: UnreadListProps) => {
         <SidebarGroup>
             <SidebarGroupItem className={'gap-1 pl-1'}>
                 <Flex width='100%' justify='between' align='center' gap='2' pr='2' className="group">
-                    <Flex align='center' gap='2' width='100%' onClick={toggle} className="cursor-default select-none">
+                    <Flex align='center' gap='2' width='auto' onClick={toggle} className="min-w-0 cursor-default select-none">
                         <SidebarGroupLabel>{__("Unread")}</SidebarGroupLabel>
-                        <Box className={clsx('transition-opacity ease-in-out duration-200',
-                            !showData && totalUnreadCount > 0 ? 'opacity-100' : 'opacity-0')}>
+                        {totalUnreadCount > 0 ? (
                             <SidebarBadge>
                                 {totalUnreadCount}
                             </SidebarBadge>
-                        </Box>
+                        ) : null}
                     </Flex>
                     <Flex align='center' gap='1'>
                         <UnreadSectionActions channelIDs={channelIDs} />

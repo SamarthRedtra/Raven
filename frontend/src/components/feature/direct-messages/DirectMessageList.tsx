@@ -90,8 +90,8 @@ export const DirectMessageItemElement = ({ channel }: { channel: DMChannelWithUn
         return null
     }
 
-    return <SidebarItem to={channel.name} className={'py-0.5 px-2'}>
-        <SidebarIcon>
+    return <SidebarItem to={channel.name} className={'py-0.5 px-2 min-w-0 w-full flex-nowrap overflow-hidden'}>
+        <SidebarIcon className='shrink-0'>
             <UserAvatar src={userData?.user_image}
                 alt={userData?.full_name}
                 isBot={userData?.type === 'Bot'}
@@ -103,7 +103,7 @@ export const DirectMessageItemElement = ({ channel }: { channel: DMChannelWithUn
                 availabilityStatus={userData?.availability_status}
             />
         </SidebarIcon>
-        <Flex justify='between' className='min-w-0 flex-1'>
+        <Flex align='center' gap='1' wrap='nowrap' className='min-w-0 flex-1 overflow-hidden'>
             <Text size={{
                 initial: '3',
                 md: '2'

@@ -223,7 +223,7 @@ export const ChatBoxBody = ({ channelData }: ChatBoxBodyProps) => {
     const isSiteInReadOnlyMode = useIsSiteInReadOnlyMode()
 
     const composer = canUserSendMessage ? (
-        <Stack className="shrink-0 z-20 min-w-0 max-w-full bg-white dark:bg-gray-2 pt-1 pb-1">
+        <Stack className="shrink-0 z-[60] min-w-0 max-w-full bg-white dark:bg-gray-2 pt-1 pb-1">
             <TypingIndicator channel={channelData.name} />
             {isSiteInReadOnlyMode ? <Box p='3' className="border border-gray-6 rounded-md bg-slate-1 animate-fadein text-center">
                 <Text as='span' size='2' weight='regular' color='gray'>
@@ -278,6 +278,7 @@ export const ChatBoxBody = ({ channelData }: ChatBoxBodyProps) => {
                     pinnedMessagesString={channelData.pinned_messages_string}
                     replyToMessage={handleReplyAction}
                     isChannelReadOnly={!channelMemberProfile}
+                    focusComposer={() => tiptapRef.current?.focusEditor()}
                 />
             </FileDrop>
             <Flex direction="column" gap="0" className="min-h-0 shrink-0">

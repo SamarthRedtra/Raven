@@ -19,6 +19,11 @@ import useOutsideClick from "@/hooks/useOutsideClick"
 import { MessageContextMenu } from "../MessageActions/MessageActions"
 import { QuickActions } from "../MessageActions/QuickActions/QuickActions"
 
+const isInteractiveTapTarget = (target: EventTarget | null) => {
+    if (!(target instanceof Element)) return false
+    return Boolean(target.closest('a, button, [role="button"], input, textarea, img, video, audio'))
+}
+
 export interface Props {
     message: Message
     user: UserFields | undefined
@@ -31,10 +36,12 @@ export interface Props {
     onReply: () => void,
     onForward: () => void,
     onViewReaction: () => void,
-    onAttachToDocument: () => void
+    onAttachToDocument: () => void,
+    focusComposer?: () => void,
+    isChannelReadOnly?: boolean,
 }
 
-export const LeftRightLayout = ({ message, user, isActive, isHighlighted, onReplyMessageClick, onDelete, showThreadButton, onEdit, onReply, onForward, onViewReaction, onAttachToDocument }: Props) => {
+export const LeftRightLayout = ({ message, user, isActive, isHighlighted, onReplyMessageClick, onDelete, showThreadButton, onEdit, onReply, onForward, onViewReaction, onAttachToDocument, focusComposer, isChannelReadOnly = false }: Props) => {
 
     const { name, owner: userID, is_bot_message, bot, creation: timestamp, message_reactions, is_continuation, linked_message, replied_message_details } = message
 
@@ -53,10 +60,16 @@ export const LeftRightLayout = ({ message, user, isActive, isHighlighted, onRepl
     const isHoveredDebounced = useDebounce(isHovered, isDesktop ? 400 : 200)
     const [isEmojiPickerOpen, setEmojiPickerOpen] = useState(false)
 
-    // For mobile, we want to show the quick actions on double tap
+    // Mobile: single tap focuses composer; double tap toggles quick actions
     const bind = useDoubleTap((event) => {
         if (!isDesktop)
             setIsHovered(!isHovered)
+    }, 300, {
+        onSingleTap: (event) => {
+            if (isDesktop || isChannelReadOnly || !focusComposer) return
+            if (isInteractiveTapTarget(event.target)) return
+            focusComposer()
+        }
     });
     const ref = useOutsideClick(() => {
         if (!isDesktop)

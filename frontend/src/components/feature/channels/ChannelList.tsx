@@ -95,12 +95,14 @@ export const ChannelItemElement = ({ channel }: { channel: ChannelWithUnreadCoun
 
     return (
         <ContextMenu.Root>
-            <ContextMenu.Trigger>
-                <SidebarItem to={channel.name} className={`py-1.5 px-2.5
+            <ContextMenu.Trigger asChild>
+                <SidebarItem to={channel.name} className={`py-1.5 px-2.5 min-w-0 w-full flex-nowrap overflow-hidden
                 data-[state=open]:bg-gray-3
                 `}>
-                    <ChannelIcon type={channel.type} size='18' />
-                    <Flex justify='between' align='center' className='min-w-0 flex-1'>
+                    <span className='inline-flex shrink-0 items-center'>
+                        <ChannelIcon type={channel.type} size='18' />
+                    </span>
+                    <Flex align='center' gap='1' wrap='nowrap' className='min-w-0 flex-1 overflow-hidden'>
                         <Text size={{
                             initial: '3',
                             md: '2'

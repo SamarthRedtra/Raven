@@ -84,7 +84,7 @@ export const SidebarItem = forwardRef<HTMLAnchorElement, SidebarItemProps>(({ to
                         gap='2'
                         align='center'
                         px='2'
-                        className={clsx('cursor-pointer text-gray-12 user-select-none rounded-md no-underline sm:hover:bg-gray-3 active:bg-gray-3 min-w-0', isActive ? activeClass : '', className)}
+                        className={clsx('cursor-pointer text-gray-12 user-select-none rounded-md no-underline sm:hover:bg-gray-3 active:bg-gray-3 min-w-0 flex-nowrap overflow-hidden', isActive ? activeClass : '', className)}
                         {...props}>
                         {children}
                     </Flex>
@@ -160,14 +160,12 @@ export const SidebarViewMoreButton = ({ expanded, onClick, ...props }: SidebarVi
 export const SidebarBadge = ({ children, className, ...props }: BadgeProps) => {
 
     return (
-        <Theme accentColor='gray'>
-            <div className={clsx(`flex items-center justify-center min-w-2 text-accent-a11 dark:text-accent-a11 dark:bg-accent-a3 bg-accent-a4 text-xs py-0.5 px-2 rounded-radius2
+        <Theme accentColor='gray' className='shrink-0'>
+            <div className={clsx(`flex shrink-0 items-center justify-center min-w-2 text-accent-a11 dark:text-accent-a11 dark:bg-accent-a3 bg-accent-a4 text-xs py-0 px-1.5 rounded-radius2
             whitespace-nowrap font-medium
             `, className)}>
                 {children}
             </div>
         </Theme>
-
-
     )
 }

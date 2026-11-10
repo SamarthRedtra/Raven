@@ -84,7 +84,7 @@ export const ImageMessageBlock = memo(({ message, isScrolling = false, user }: I
                 <img
                     src={message.file}
                     loading='lazy'
-                    className='z-50 absolute top-0 left-0 rounded-md shadow-md object-cover'
+                    className='z-0 absolute top-0 left-0 rounded-md shadow-md object-cover'
                     height={height}
                     style={{
                         maxHeight: height + 'px',

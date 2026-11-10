@@ -36,6 +36,11 @@ import { getErrorMessage } from '@/components/layout/AlertBanner/ErrorBanner'
 import { Stack } from '@/components/layout/Stack'
 import { BiChat } from 'react-icons/bi'
 
+const isInteractiveTapTarget = (target: EventTarget | null) => {
+    if (!(target instanceof Element)) return false
+    return Boolean(target.closest('a, button, [role="button"], input, textarea, img, video, audio'))
+}
+
 interface MessageBlockProps {
     message: Message,
     setDeleteMessage: (message: Message) => void,
@@ -48,9 +53,10 @@ interface MessageBlockProps {
     setReactionMessage: (message: Message) => void,
     showThreadButton?: boolean,
     isChannelReadOnly?: boolean,
+    focusComposer?: () => void,
 }
 
-export const MessageItem = ({ message, setDeleteMessage, isHighlighted, onReplyMessageClick, setEditMessage, replyToMessage, forwardMessage, onAttachDocument, setReactionMessage, showThreadButton = true, isChannelReadOnly = false }: MessageBlockProps) => {
+export const MessageItem = ({ message, setDeleteMessage, isHighlighted, onReplyMessageClick, setEditMessage, replyToMessage, forwardMessage, onAttachDocument, setReactionMessage, showThreadButton = true, isChannelReadOnly = false, focusComposer }: MessageBlockProps) => {
 
     const { name, owner: userID, is_bot_message, bot, creation: timestamp, message_reactions, is_continuation, linked_message, replied_message_details } = message
 
@@ -97,10 +103,16 @@ export const MessageItem = ({ message, setDeleteMessage, isHighlighted, onReplyM
         }
     }
 
-    // For mobile, we want to show the quick actions on double tap
+    // Mobile: single tap focuses composer; double tap toggles quick actions
     const bind = useDoubleTap((event) => {
         if (!isDesktop)
             setIsHovered(!isHovered)
+    }, 300, {
+        onSingleTap: (event) => {
+            if (isDesktop || isChannelReadOnly || !focusComposer) return
+            if (isInteractiveTapTarget(event.target)) return
+            focusComposer()
+        }
     });
 
     const ref = useOutsideClick(() => {
@@ -150,6 +162,8 @@ export const MessageItem = ({ message, setDeleteMessage, isHighlighted, onReplyM
                 onForward={onForward}
                 onViewReaction={onViewReaction}
                 onAttachToDocument={onAttachToDocument}
+                focusComposer={focusComposer}
+                isChannelReadOnly={isChannelReadOnly}
             /> :
                 <Box className='relative'>
                     {!message.is_continuation && message.is_thread ?
