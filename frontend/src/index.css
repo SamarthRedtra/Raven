@@ -39,7 +39,7 @@ ul {
 }
 
 :root {
-    --sidebar-width: 20rem;
+    --sidebar-width: 13rem;
 }
 
 @media (max-width: 768px) {
@@ -84,6 +84,19 @@ html header button {
         /* IE and Edge */
         scrollbar-width: none;
         /* Firefox */
+    }
+
+    .sidebar-label-scroll {
+        scrollbar-width: thin;
+    }
+
+    .sidebar-label-scroll::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .sidebar-label-scroll::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        background-color: var(--gray-a8);
     }
 }
 

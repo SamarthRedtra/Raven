@@ -1,7 +1,9 @@
 import { SidebarGroup, SidebarGroupItem, SidebarGroupLabel, SidebarGroupList, SidebarItem } from "../../layout/Sidebar/SidebarComp"
 import { SidebarBadge, SidebarViewMoreButton } from "../../layout/Sidebar/SidebarComp"
 import { CreateChannelButton } from "./CreateChannelModal"
-import { useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useContext, useMemo, useState } from "react"
+import { useSidebarGroupListHeight } from "@/hooks/useSidebarGroupListHeight"
+import { SidebarScrollableLabel } from "@/components/layout/Sidebar/SidebarScrollableLabel"
 import { ChannelIcon } from "@/utils/layout/channelIcon"
 import { ContextMenu, DropdownMenu, Flex, IconButton, Text } from "@radix-ui/themes"
 import { useParams, useSearchParams } from "react-router-dom"
@@ -38,12 +40,7 @@ export const ChannelList = ({ channels, label = __("Channels"), showCreate = tru
         return channels.filter(channel => !pinnedChannelIDs?.includes(channel.name))
     }, [channels, pinnedChannelIDs])
 
-    const ref = useRef<HTMLDivElement>(null)
-    const [height, setHeight] = useState(showData ? Math.max(filteredChannels.length * 36 - 4, 0) : 0)
-
-    useLayoutEffect(() => {
-        setHeight(ref.current?.clientHeight ?? 0)
-    }, [filteredChannels])
+    const { ref, height } = useSidebarGroupListHeight(showData)
 
     return (
         <SidebarGroup>
@@ -96,17 +93,16 @@ export const ChannelItemElement = ({ channel }: { channel: ChannelWithUnreadCoun
     return (
         <ContextMenu.Root>
             <ContextMenu.Trigger asChild>
-                <SidebarItem to={channel.name} className={`py-1.5 px-2.5 min-w-0 w-full flex-nowrap overflow-hidden
+                <SidebarItem to={channel.name} className={`py-1.5 px-2.5 min-w-0 w-full
                 data-[state=open]:bg-gray-3
                 `}>
                     <span className='inline-flex shrink-0 items-center'>
                         <ChannelIcon type={channel.type} size='18' />
                     </span>
-                    <Flex align='center' gap='1' wrap='nowrap' className='min-w-0 flex-1 overflow-hidden'>
-                        <Text size={{
-                            initial: '3',
-                            md: '2'
-                        }} className="min-w-0 truncate" as='span' weight={showUnread ? 'bold' : 'medium'}>{channel.channel_name}</Text>
+                    <Flex align='center' gap='1' className='min-w-0 flex-1'>
+                        <SidebarScrollableLabel weight={showUnread ? 'bold' : 'medium'}>
+                            {channel.channel_name}
+                        </SidebarScrollableLabel>
                         {showUnread ? <SidebarBadge>{channel.unread_count}</SidebarBadge> : null}
                     </Flex>
                 </SidebarItem>

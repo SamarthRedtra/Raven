@@ -3,7 +3,8 @@ import { ChannelItemElement } from '@/components/feature/channels/ChannelList';
 import { DirectMessageItemElement } from '../../feature/direct-messages/DirectMessageList';
 import { __ } from '@/utils/translations';
 import { useStickyState } from "@/hooks/useStickyState";
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
+import { useSidebarGroupListHeight } from "@/hooks/useSidebarGroupListHeight";
 import { SidebarBadge, SidebarViewMoreButton } from "@/components/layout/Sidebar/SidebarComp";
 import { Box, DropdownMenu, Flex, IconButton } from "@radix-ui/themes";
 import { ChannelWithUnreadCount, DMChannelWithUnreadCount } from "@/components/layout/Sidebar/useGetChannelUnreadCounts";
@@ -24,13 +25,7 @@ export const UnreadList = ({ unreadChannels, unreadDMs }: UnreadListProps) => {
 
     const toggle = () => setShowData(d => !d)
 
-    const ref = useRef<HTMLDivElement>(null)
-
-    const [height, setHeight] = useState(ref?.current?.clientHeight ?? showData ? (unreadDMs.length + unreadChannels.length) * (36) - 4 : 0)
-
-    useLayoutEffect(() => {
-        setHeight(ref.current?.clientHeight ?? 0)
-    }, [unreadDMs, unreadChannels])
+    const { ref, height } = useSidebarGroupListHeight(showData)
 
     const { totalUnreadCount, channelIDs } = useMemo(() => {
         let totalUnreadCount = 0

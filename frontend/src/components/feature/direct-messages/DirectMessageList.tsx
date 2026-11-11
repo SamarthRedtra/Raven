@@ -1,5 +1,7 @@
 import { useFrappePostCall } from "frappe-react-sdk"
-import { useContext, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { useContext, useMemo, useState } from "react"
+import { useSidebarGroupListHeight } from "@/hooks/useSidebarGroupListHeight"
+import { SidebarScrollableLabel } from "@/components/layout/Sidebar/SidebarScrollableLabel"
 import { useNavigate, useParams } from "react-router-dom"
 import { SidebarGroup, SidebarGroupItem, SidebarGroupLabel, SidebarGroupList, SidebarIcon, SidebarButtonItem } from "../../layout/Sidebar/SidebarComp"
 import { SidebarBadge, SidebarItem, SidebarViewMoreButton } from "../../layout/Sidebar/SidebarComp"
@@ -27,13 +29,7 @@ export const DirectMessageList = ({ dm_channels }: DirectMessageListProps) => {
 
     const toggle = () => setShowData(d => !d)
 
-    const ref = useRef<HTMLDivElement>(null)
-
-    const [height, setHeight] = useState(ref?.current?.clientHeight ?? showData ? (dm_channels.length + (dm_channels.length < 5 ? 5 : 0)) * (34.79) : 0)
-
-    useLayoutEffect(() => {
-        setHeight(ref.current?.clientHeight ?? 0)
-    }, [dm_channels])
+    const { ref, height } = useSidebarGroupListHeight(showData)
 
     return (
         <SidebarGroup pb='4'>
@@ -90,7 +86,11 @@ export const DirectMessageItemElement = ({ channel }: { channel: DMChannelWithUn
         return null
     }
 
-    return <SidebarItem to={channel.name} className={'py-0.5 px-2 min-w-0 w-full flex-nowrap overflow-hidden'}>
+    const displayName = channel.peer_user_id !== currentUser
+        ? userData?.full_name ?? channel.peer_user_id ?? replaceCurrentUserFromDMChannelName(channel.channel_name, currentUser)
+        : `${userData?.full_name} (You)`
+
+    return <SidebarItem to={channel.name} className={'py-0.5 px-2 min-w-0 w-full'}>
         <SidebarIcon className='shrink-0'>
             <UserAvatar src={userData?.user_image}
                 alt={userData?.full_name}
@@ -103,13 +103,10 @@ export const DirectMessageItemElement = ({ channel }: { channel: DMChannelWithUn
                 availabilityStatus={userData?.availability_status}
             />
         </SidebarIcon>
-        <Flex align='center' gap='1' wrap='nowrap' className='min-w-0 flex-1 overflow-hidden'>
-            <Text size={{
-                initial: '3',
-                md: '2'
-            }} className="min-w-0 truncate" weight={showUnread ? 'bold' : 'medium'}>
-                {channel.peer_user_id !== currentUser ? userData?.full_name ?? channel.peer_user_id ?? replaceCurrentUserFromDMChannelName(channel.channel_name, currentUser) : `${userData?.full_name} (You)`}
-            </Text>
+        <Flex align='center' gap='1' className='min-w-0 flex-1'>
+            <SidebarScrollableLabel weight={showUnread ? 'bold' : 'medium'}>
+                {displayName}
+            </SidebarScrollableLabel>
             {showUnread ? <SidebarBadge>{channel.unread_count}</SidebarBadge> : null}
         </Flex>
     </SidebarItem>
