@@ -41,25 +41,23 @@ export type RightToolbarButtonsProps = {
  */
 export const RightToolbarButtons = ({ fileProps, channelID, isEdit, ...sendProps }: RightToolbarButtonsProps) => {
     return (
-        <Flex gap='2' align='center' px='1' py='1' className='shrink-0 ml-auto'>
-            <Flex gap='3' align='center'>
+        <Flex gap='2' align='center' px='1' py='1' className='w-full min-w-0 max-w-full justify-end'>
+            <Flex gap='3' align='center' className='min-w-0 flex-nowrap overflow-x-auto overscroll-x-contain'>
                 {!isEdit && channelID && <DocumentLinkButton channelID={channelID} />}
                 <MentionButtons />
-            </Flex>
-            <Separator orientation='vertical' />
-            <Flex gap='3' align='center'>
+                <Separator orientation='vertical' />
                 <AISavedPromptsButton />
                 {channelID && <CreatePollButton channelID={channelID} />}
-            </Flex>
-            <Separator orientation='vertical' />
-            <Flex gap='3' align='center'>
+                <Separator orientation='vertical' />
                 <EmojiPickerButton />
                 <GIFPickerButton />
                 {fileProps && <FilePickerButton fileProps={fileProps} />}
             </Flex>
-            <Separator orientation='vertical' />
-            <SendButton {...sendProps} />
-        </Flex >
+            <Separator orientation='vertical' className='shrink-0' />
+            <div className='shrink-0'>
+                <SendButton {...sendProps} />
+            </div>
+        </Flex>
     )
 }
 

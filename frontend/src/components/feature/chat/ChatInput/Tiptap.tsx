@@ -552,14 +552,14 @@ const Tiptap = forwardRef(({ isEdit, slotBefore, fileProps, onMessageSend, onUpA
 
 
     if (isMobile) {
-        return <Box className={clsx('pt-2 pb-8 w-full border-t border-t-gray-3 dark:border-t-gray-3 z-[60]',
-            isEdit ? 'bg-transparent dark:bg-transparent' : 'fixed bottom-0 left-0 px-4 bg-white dark:bg-gray-2'
+        return <Box className={clsx('pt-2 w-full border-t border-t-gray-3 dark:border-t-gray-3 z-[60] pb-[max(2rem,env(safe-area-inset-bottom))]',
+            isEdit ? 'bg-transparent dark:bg-transparent' : 'fixed bottom-0 left-0 right-0 px-4 bg-white dark:bg-gray-2'
         )}>
             <EditorContext.Provider value={{ editor }}>
                 {slotBefore}
-                <Flex align='end' gap='2' className='w-full'>
+                <Flex align='end' gap='2' className='w-full min-w-0'>
                     {!isEdit &&
-                        <div className='w-8'>
+                        <div className='w-8 shrink-0'>
                             <Suspense fallback={<IconButton radius='full' color='gray' variant='soft' size='2' className='mb-1'>
                                 <BiPlus size='20' />
                             </IconButton>}>
@@ -574,15 +574,15 @@ const Tiptap = forwardRef(({ isEdit, slotBefore, fileProps, onMessageSend, onUpA
                         inlinePositioning: true,
                     }}
                         editor={editor}>
-                        <div className='bg-gray-1 dark:bg-gray-3 shadow-md p-2 rounded-md'>
+                        <div className='bg-gray-1 dark:bg-gray-3 shadow-md p-2 rounded-md max-w-[min(100vw-2rem,24rem)] overflow-x-auto'>
                             <TextFormattingMenu />
                         </div>
                     </BubbleMenu>
-                    <div className='border-[1.5px] flex items-end justify-between border-gray-4 rounded-radius2 w-[calc(100vw-72px)] focus-within:border-accent-a8'>
-                        <div className='w-[85%]'>
+                    <div className='border-[1.5px] flex items-end gap-1 min-w-0 flex-1 border-gray-4 rounded-radius2 focus-within:border-accent-a8'>
+                        <div className='min-w-0 flex-1'>
                             <EditorContent editor={editor} />
                         </div>
-                        <div className='flex items-center justify-center h-full'>
+                        <div className='flex shrink-0 self-end items-center justify-center'>
                             <SendButton
                                 size='2'
                                 variant='soft'
@@ -602,16 +602,25 @@ const Tiptap = forwardRef(({ isEdit, slotBefore, fileProps, onMessageSend, onUpA
     }
 
     return (
-        <Box className='border rounded-radius2 border-gray-300 dark:border-gray-500 dark:bg-gray-3 mb-1 mr-1 max-w-full min-w-0 shrink-0 overflow-visible'>
+        <Box className='border rounded-radius2 border-gray-300 dark:border-gray-500 dark:bg-gray-3 mb-1 box-border w-full min-w-0 max-w-full'>
             <EditorContext.Provider value={{ editor }}>
                 {slotBefore}
-                <EditorContent editor={editor} />
-                <ToolPanel>
-                    <TextFormattingMenu />
-                    <RightToolbarButtons fileProps={fileProps} setContent={setContent} sendMessage={onMessageSend} messageSending={messageSending}
-                        isEdit={isEdit}
-                        channelID={channelID} />
-                </ToolPanel>
+                <div className='w-full min-w-0'>
+                    <EditorContent editor={editor} />
+                </div>
+                <ToolPanel
+                    formatting={<TextFormattingMenu />}
+                    actions={
+                        <RightToolbarButtons
+                            fileProps={fileProps}
+                            setContent={setContent}
+                            sendMessage={onMessageSend}
+                            messageSending={messageSending}
+                            isEdit={isEdit}
+                            channelID={channelID}
+                        />
+                    }
+                />
             </EditorContext.Provider>
         </Box>
 

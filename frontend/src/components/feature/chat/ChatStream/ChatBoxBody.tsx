@@ -223,7 +223,7 @@ export const ChatBoxBody = ({ channelData }: ChatBoxBodyProps) => {
     const isSiteInReadOnlyMode = useIsSiteInReadOnlyMode()
 
     const composer = canUserSendMessage ? (
-        <Stack className="shrink-0 z-[60] min-w-0 max-w-full bg-white dark:bg-gray-2 pt-1 pb-1">
+        <Stack className="shrink-0 z-[60] w-full min-w-0 max-w-full overflow-visible bg-white dark:bg-gray-2 pt-1 pb-1">
             <TypingIndicator channel={channelData.name} />
             {isSiteInReadOnlyMode ? <Box p='3' className="border border-gray-6 rounded-md bg-slate-1 animate-fadein text-center">
                 <Text as='span' size='2' weight='regular' color='gray'>
@@ -281,7 +281,7 @@ export const ChatBoxBody = ({ channelData }: ChatBoxBodyProps) => {
                     focusComposer={() => tiptapRef.current?.focusEditor()}
                 />
             </FileDrop>
-            <Flex direction="column" gap="0" className="min-h-0 shrink-0">
+            <Flex direction="column" gap="0" className="min-h-0 shrink-0 overflow-visible">
                 {shouldShowJoinBox ?
                     <JoinChannelBox
                         channelData={channelData}
@@ -316,10 +316,10 @@ const ChatBoxBodyContainer = ({ children }: { children: React.ReactNode }) => {
     const { threadID } = useParams()
 
     return <div className={clsx(
-        "grid h-full min-h-0 w-full min-w-0 flex-1 overflow-hidden pt-14 pb-3",
+        "grid h-full min-h-0 w-full min-w-0 flex-1 overflow-y-hidden pt-14 pb-3",
         "pl-2 pr-4 sm:pl-4 sm:pr-8",
-        // Do not clip the composer horizontally — send button must stay visible.
-        "grid-rows-[minmax(0,1fr)_auto] overflow-x-hidden overflow-y-hidden",
+        // Message stream clips itself; keep composer (incl. Send) unclipped horizontally.
+        "grid-rows-[minmax(0,1fr)_auto]",
         threadID && "sm:pl-4"
     )}>
         {children}
