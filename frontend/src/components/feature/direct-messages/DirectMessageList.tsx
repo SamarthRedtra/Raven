@@ -103,12 +103,12 @@ export const DirectMessageItemElement = ({ channel }: { channel: DMChannelWithUn
                 availabilityStatus={userData?.availability_status}
             />
         </SidebarIcon>
-        <Flex align='center' gap='1' className='min-w-0 flex-1'>
-            <SidebarScrollableLabel weight={showUnread ? 'bold' : 'medium'}>
-                {displayName}
-            </SidebarScrollableLabel>
-            {showUnread ? <SidebarBadge>{channel.unread_count}</SidebarBadge> : null}
-        </Flex>
+        <SidebarScrollableLabel
+            weight={showUnread ? 'bold' : 'medium'}
+            adjacent={showUnread ? <SidebarBadge>{channel.unread_count}</SidebarBadge> : null}
+        >
+            {displayName}
+        </SidebarScrollableLabel>
     </SidebarItem>
 }
 

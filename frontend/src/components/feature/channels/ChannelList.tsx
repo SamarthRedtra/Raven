@@ -99,12 +99,12 @@ export const ChannelItemElement = ({ channel }: { channel: ChannelWithUnreadCoun
                     <span className='inline-flex shrink-0 items-center'>
                         <ChannelIcon type={channel.type} size='18' />
                     </span>
-                    <Flex align='center' gap='1' className='min-w-0 flex-1'>
-                        <SidebarScrollableLabel weight={showUnread ? 'bold' : 'medium'}>
-                            {channel.channel_name}
-                        </SidebarScrollableLabel>
-                        {showUnread ? <SidebarBadge>{channel.unread_count}</SidebarBadge> : null}
-                    </Flex>
+                    <SidebarScrollableLabel
+                        weight={showUnread ? 'bold' : 'medium'}
+                        adjacent={showUnread ? <SidebarBadge>{channel.unread_count}</SidebarBadge> : null}
+                    >
+                        {channel.channel_name}
+                    </SidebarScrollableLabel>
                 </SidebarItem>
             </ContextMenu.Trigger>
             <ContextMenu.Content>
