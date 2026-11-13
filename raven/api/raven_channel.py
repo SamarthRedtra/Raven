@@ -46,8 +46,6 @@ def get_channel_list(hide_archived: bool = False):
 	channel = frappe.qb.DocType("Raven Channel")
 	channel_member = frappe.qb.DocType("Raven Channel Member")
 
-	workspace_member = frappe.qb.DocType("Raven Workspace Member")
-
 	selected = [
 		channel.name,
 		channel.channel_name,
@@ -67,6 +65,23 @@ def get_channel_list(hide_archived: bool = False):
 	if frappe.db.has_column("Raven Channel", "custom_project_completed"):
 		selected.append(channel.custom_project_completed)
 
+	# Do not JOIN workspace_member: duplicate rows per workspace multiply channels in the list.
+	member_workspaces = frappe.db.sql_list(
+		"""
+		SELECT DISTINCT workspace
+		FROM `tabRaven Workspace Member`
+		WHERE user = %s
+		""",
+		frappe.session.user,
+	)
+
+	if member_workspaces:
+		workspace_channel_access = channel.workspace.isin(member_workspaces) & (
+			(channel.type != "Private") | (channel_member.user_id == frappe.session.user)
+		)
+	else:
+		workspace_channel_access = channel.name == ""
+
 	query = (
 		frappe.qb.from_(channel)
 		.select(*selected)
@@ -74,17 +89,9 @@ def get_channel_list(hide_archived: bool = False):
 		.on(
 			(channel.name == channel_member.channel_id) & (channel_member.user_id == frappe.session.user)
 		)
-		.left_join(workspace_member)
-		.on(
-			(channel.workspace == workspace_member.workspace)
-			& (workspace_member.user == frappe.session.user)
-		)
 		.where(
 			((channel.is_direct_message == 1) & (channel_member.user_id == frappe.session.user))
-			| (
-				(workspace_member.user == frappe.session.user)
-				& ((channel.type != "Private") | (channel_member.user_id == frappe.session.user))
-			)
+			| workspace_channel_access
 		)
 		.where(channel.is_thread == 0)
 	)

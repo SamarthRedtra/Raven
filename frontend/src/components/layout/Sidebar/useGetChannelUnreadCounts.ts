@@ -35,7 +35,21 @@ export const useGetChannelUnreadCounts = ({ channels, dm_channels, unread_count 
         const unreadDMs: DMChannelWithUnreadCount[] = []
         const readDMs: DMChannelWithUnreadCount[] = []
 
-        const allChannels: (ChannelListItem | DMChannelListItem)[] = [...channels, ...dm_channels]
+        const dedupeByName = <T extends { name: string }>(items: T[]): T[] => {
+            const seen = new Set<string>()
+            return items.filter((item) => {
+                if (seen.has(item.name)) {
+                    return false
+                }
+                seen.add(item.name)
+                return true
+            })
+        }
+
+        const allChannels: (ChannelListItem | DMChannelListItem)[] = [
+            ...dedupeByName(channels),
+            ...dedupeByName(dm_channels),
+        ]
 
         // Process all channels and DMs to separate unread and read
         allChannels.forEach(channel => {
